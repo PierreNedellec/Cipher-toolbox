@@ -25,6 +25,7 @@ def char_freq(text):
         for place in list(string.printable):
             if alphabet[place] == freq:
                 print(place, freq)
+    # This for loop prints the items in order of frequency, rather than in alphabetical order.
 
 # CODE
 
