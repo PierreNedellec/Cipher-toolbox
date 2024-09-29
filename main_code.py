@@ -21,9 +21,10 @@ def char_freq(text):
     for character in text:
         alphabet[character] += 1
 
-    for place in list(string.printable):
-        if alphabet[place] != 0:
-            print(place, alphabet[place])
+    for freq in range(max(alphabet.values()),0,-1):
+        for place in list(string.printable):
+            if alphabet[place] == freq:
+                print(place, freq)
 
 # CODE
 
