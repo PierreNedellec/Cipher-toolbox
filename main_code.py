@@ -107,7 +107,7 @@ BFXJXT XJ KWT DCAP DCT X RFC KHLJK, ILK SD X SFHT JWFHT BP UTFHJ NXKW WTH: NDLAS
 #allcshifts(cipher)
 #print(affinedecrypt(cipher,3,7))
 #print(affineinverse(-15))
-chartobereplaced = [['T','U','V','W','K','F','X','A'],['E','F','G','H','T','A','I','L']]
+chartobereplaced = [list('FIRSTUVWXYZABCDEGHJKLMNOPQ'),list(string.ascii_uppercase)]
 charreplace(cipher,chartobereplaced)
 
 
