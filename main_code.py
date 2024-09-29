@@ -46,6 +46,26 @@ def allcshifts(text):
         print('shift',a,end=' --> ')
         print(cshift(text,a))
 
+def affineinverse(a):
+    # a*d = 1 mod 26. We want to find d
+    d = 0
+    while (a*d)%26 != 1:
+        d += 1
+    return d
+
+def affinedecrypt(text,a,b):
+
+    new_text = ''
+    for character in text:
+        if character not in letters:
+            new_text += character
+            continue
+        new_character = letters.index(character) - b
+        new_character = letters[new_character%26]
+        new_text += new_character
+    return new_text
+
+
 # CODE
 
 cipher = """HTRTCK TMTCKJ WFMT BFST XK RATFHTH KWFC TMTH KD BT KWFK X FB XC BDHKFA SFCVTH.
@@ -59,5 +79,11 @@ HDVTHJ KTAAJ BT KWFK X FB XBFVXCXCV XK FAA FCS KWFK X CTTS KD RFAB SDNC, ILK X R
 LCATJJ BP ETHJTRLKDH RFC IT UDLCS FCS JKDEETS X NXAA TXKWTH VD BFS DH IT ZXAATS.
 
 BFXJXT XJ KWT DCAP DCT X RFC KHLJK, ILK SD X SFHT JWFHT BP UTFHJ NXKW WTH: NDLAS JWT ITAXTMT BT, FCS NDLAS SDXCV JD ELK WTH XC FJ BLRW SFCVTH FJ X FEETFH KD IT XC?"""
+
+
 #char_freq(cipher)
-allcshifts(cipher)
+#allcshifts(cipher)
+print(affineinverse(3))
+print(affineinverse(5))
+print(affineinverse(11))
+print(affineinverse(23))
