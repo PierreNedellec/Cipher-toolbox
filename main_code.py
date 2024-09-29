@@ -17,15 +17,14 @@ for key in keys:
 # FUNCTIONS
 
 def char_freq(text):
-    count = [0 for a in alphabet]
 
     for character in text:
-        count[alphabet.index(character)] += 1
+        alphabet[character] += 1
 
-    for place in range(len(alphabet)):
-        print(alphabet[place],count[place])
+    for place in list(string.printable):
+        if alphabet[place] != 0:
+            print(place, alphabet[place])
 
 # CODE
 
-#char_freq('hello world')
-print(alphabet)
+char_freq("When in the Course of human events, it becomes necessary for one people to dissolve the political bands which have connected them with another, and to assume among the powers of the earth, the separate and equal station to which the Laws of Nature and of Nature's God entitle them, a decent respect to the opinions of mankind requires that they should declare the causes which impel them to the separation.")
