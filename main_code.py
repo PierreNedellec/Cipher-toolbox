@@ -5,8 +5,14 @@ import string
 # VARIABLES
 
 global alphabet
-alphabet = list(string.printable)
+alphabet = {}
 
+keys = [a for a in list(string.printable)]
+
+for key in keys:
+    alphabet[key] = 0
+# Creates dictionary with (all printable characters) : 0
+# The 0 represents the frequency
 
 # FUNCTIONS
 
@@ -21,4 +27,5 @@ def char_freq(text):
 
 # CODE
 
-char_freq('hello world')
+#char_freq('hello world')
+print(alphabet)
