@@ -133,21 +133,25 @@ def wordfreq(text):
     text = text.split(' ')
     
     for word in text:
-        
         if word in words:
             words[word] += 1
-            if word == 'HAT':
-                print(words)
         else:
             words[word] = 1
+    # Makes a dictionary with all the words with their frequencies
     
-    return words
+    sortedwords = sorted(words.items(),key= lambda item: item[1])
+    sortedwords = dict(sortedwords[::-1])
+    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
+            
+    return sortedwords
 
 # CODE
 
 cipher = """text"""
 
-v = wordfreq(corpus[:1000000])
+v = wordfreq(corpus)
+
+
 
 
 
