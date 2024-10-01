@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import string
-import matplotlib.pyplot as plt
-import numpy as np
 
 # VARIABLES
 
@@ -24,16 +22,22 @@ for key in keys:
 
 # FUNCTIONS
 
-def char_freq(text):
-
-    for character in text:
-        alphabet[character] += 1
-        
-    for freq in range(max(alphabet.values()),0,-1):
-        for place in list(string.printable):
-            if alphabet[place] == freq:
-                print(place, freq)
-    # This for loop prints the items in order of frequency, rather than in alphabetical order.
+def charfreq(text):
+    letters = dict()
+    text = text.split(' ')
+    
+    for letter in text:
+        if letter in letters:
+            letters[letter] += 1
+        else:
+            letters[letter] = 1
+    # Makes a dictionary with all the words with their frequencies
+    
+    sortedletters = sorted(letters.items(),key= lambda item: item[1])
+    sortedletters = dict(sortedletters[::-1])
+    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
+            
+    return sortedletters
 
 def cshift(text,key):
     key = key%26
