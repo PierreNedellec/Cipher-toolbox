@@ -5,20 +5,14 @@ import string
 
 # VARIABLES
 
-corpus = open('brown_corpus_words.txt','r').read()
+
+
+global brown_corpus
+brown_corpus = open('brown_corpus_words.txt','r').read()
+brown_corpus = brown_corpus.split(' ')
 
 global letters
 letters = list(string.ascii_uppercase)
-
-global alphabet
-alphabet = {}
-
-keys = [a for a in list(string.printable)]
-
-for key in keys:
-    alphabet[key] = 0
-# Creates dictionary with (all printable characters) : 0
-# The 0 represents the frequency
 
 # FUNCTIONS
 
@@ -123,18 +117,22 @@ def formatcorpus(file):
         
     corpus = corpus.replace("""'s""",'')
     corpus = corpus.replace("""s'""",'s')
+    corpus = corpus.replace("'",'')
     corpus = corpus.replace('\n',' ')
     corpus = corpus.replace('- ',' ')
-    corpus = corpus.repalce(' -',' ')
+    corpus = corpus.replace(' -',' ')
+    #corpus = corpus.replace('-',' ')
+    # Removing all hyphens that are not in the middle of a word
     while '  ' in corpus:
         corpus = corpus.replace('  ',' ')
     corpus = corpus.upper()
-    print(corpus)
+    
     return corpus
 
 def wordfreq(text):
     words = dict()
-    text = text.split(' ')
+    if type(text) == str:
+        text = text.split(' ')
     
     for word in text:
         if word in words:
@@ -153,7 +151,18 @@ def wordfreq(text):
 
 cipher = """text"""
 
-v = wordfreq(corpus)
+
+
+g = open('english_words_frequencies.txt','w')
+f = wordfreq(brown_corpus)
+f = f.keys()
+n = ''
+
+for a in f:
+    a += ' '
+    n += a
+
+g.write(n)
 
 
 
