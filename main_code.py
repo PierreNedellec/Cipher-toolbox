@@ -153,15 +153,41 @@ cipher = """text"""
 
 
 
-g = open('english_words_frequencies.txt','w')
-f = wordfreq(brown_corpus)
-f = f.keys()
-n = ''
 
+
+
+
+f = open('english_words_frequencies.txt','r').read()
+f = f.split(' ')
+num = [a for a in range(10)]
+
+for b in f:
+    flag = False
+    for c in num:
+        if str(c) in b:
+            flag = True
+    if flag:
+        f.remove(b)
+
+n = ''
 for a in f:
     a += ' '
     n += a
 
+
+h = open('english_words_frequencies.txt','w')
+h.write(n)
+
+
+
+f = sorted(f)
+
+g = open('english_words_alphabetical.txt','w')
+n = ''
+for a in f:
+    a += ' '
+    n += a
+    
 g.write(n)
 
 
