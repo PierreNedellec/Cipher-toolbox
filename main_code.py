@@ -61,11 +61,6 @@ def caesardecrypt(text,key):
     return new_text
 
 def innerproduct_vectors(alpha,beta):
-
-    list(alpha)
-    list(beta)
-    print(alpha)
-    print(beta)
     
     if len(alpha) != len(beta):
         print('ERROR: vector lengths do not match')
@@ -196,6 +191,13 @@ def wordfreq(text):
             
     return sortedwords
 
+def dict2valuelist(mydict):
+    out = []
+    for keys, values in mydict.items():
+        out.append(values)
+        
+    return out
+
 # CODE
 
 cipher = """Prime Minister Sir Keir Starmer has paid back more than £6,000 worth of gifts and hospitality received since becoming prime minister, following a backlash over donations.
@@ -244,7 +246,7 @@ The name of the donor listed on the latest register of interests is Ayita LLC.""
 ft = charfreq(cipher,1)
 fb = charfreq(brown_corpus,1)
 
-print(cosineangle_vectors(ft.values(), fb.values()))
+print(cosineangle_vectors(dict2valuelist(ft), dict2valuelist(fb)))
 
 
 
