@@ -11,8 +11,9 @@ from math import sqrt
 global brown_corpus
 brown_corpus = open('brown_corpus_words.txt','r').read()
 
-global letters
-letters = list(string.ascii_uppercase)
+
+global english_letters
+english_letters = list(string.ascii_uppercase)
 
 # FUNCTIONS
 
@@ -56,15 +57,23 @@ def charfreq(text,lettersonly=False):
     return letters
 
 
+
+
+global english_monogram_frequencies
+english_monogram_frequencies = charfreq(brown_corpus,1)
+
+
+
+
 def caesardecrypt(text,key):
     key = key%26
     new_text = ''
     for character in text:
-        if character not in letters:
+        if character not in english_letters:
             new_text += character
             continue
-        new_character = letters.index(character) - key
-        new_character = letters[new_character%26]
+        new_character = english_letters.index(character) - key
+        new_character = english_letters[new_character%26]
         new_text += new_character
     return new_text
 
@@ -96,7 +105,18 @@ def cosineangle_vectors(a,b):
 
 
 def brutecaesardecrypt(text):
-    return
+    key = 'not found'
+    decrypt = 'not found: try decreasing the threshold'
+    for k in range(26):
+        if monogramfitness(text) > 0.6:
+            decrypt = text
+            key = k
+        text = caesardecrypt(text,1)
+        # Rotates the shift by 1 every time
+    
+    
+    
+    return decrypt, key
 
 def allcaesars(text):
     for a in range(26):
@@ -114,12 +134,12 @@ def affinedecrypt(text,a,b):
     # y = ax + b
     new_text = ''
     for character in text:
-        if character not in letters:
+        if character not in english_letters:
             new_text += character
             continue
-        new_character = letters.index(character) - b
+        new_character = english_letters.index(character) - b
         new_character = new_character*affineinverse(a)
-        new_character = letters[new_character%26]
+        new_character = english_letters[new_character%26]
         new_text += new_character
     return new_text
 
@@ -128,7 +148,7 @@ def charreplace(text,characters):
     for option in range(2):
         new_text = ''
         for character in text:
-            if character not in letters:
+            if character not in english_letters:
                 new_text += character
                 continue
             if character in characters[0]:
@@ -150,10 +170,10 @@ def monoalphabeticdecrypt(text,key):
     
     new_text = ''
     for character in text:
-        if character not in letters:
+        if character not in english_letters:
             new_text += character
             continue
-        new_character = letters[key.index(character)]
+        new_character = english_letters[key.index(character)]
         new_text += new_character
     print(new_text)
     
@@ -205,7 +225,7 @@ def dict2valuelist(mydict):
 
 def monogramfitness(text):
     ft = charfreq(text,1)
-    fb = charfreq(brown_corpus,1)
+    fb = english_monogram_frequencies
 
     return (cosineangle_vectors(dict2valuelist(ft), dict2valuelist(fb)))
 
@@ -215,8 +235,9 @@ def monogramfitness(text):
 cipher = open('cipher.txt','r').read()
 
 
-print(monogramfitness(cipher))
-
+text, ky = brutecaesardecrypt(cipher)
+print(text)
+print('key:',ky)
 
 
 
