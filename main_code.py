@@ -66,6 +66,8 @@ english_monogram_frequencies = charfreq(brown_corpus,1)
 
 
 def caesardecrypt(text,key):
+    text = text.upper()
+    
     key = key%26
     new_text = ''
     for character in text:
@@ -108,7 +110,7 @@ def brutecaesardecrypt(text):
     key = 'not found'
     decrypt = 'not found: try decreasing the threshold'
     for k in range(26):
-        if monogramfitness(text) > 0.6:
+        if monogramfitness(text) > 0.8:
             decrypt = text
             key = k
         text = caesardecrypt(text,1)
