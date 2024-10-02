@@ -10,22 +10,36 @@ from math import sqrt
 
 global brown_corpus
 brown_corpus = open('brown_corpus_words.txt','r').read()
-brown_corpus = brown_corpus.split(' ')
 
 global letters
 letters = list(string.ascii_uppercase)
 
 # FUNCTIONS
 
-def charfreq(text):
-    letters = dict()
-    text = text.split(' ')
+def charfreq(text,lettersonly=False):
+    text = text.upper()
     
-    for letter in text:
-        if letter in letters:
-            letters[letter] += 1
-        else:
-            letters[letter] = 1
+    if lettersonly:
+        keys = list(string.ascii_uppercase)
+        letters = dict()
+        for i in keys:
+           letters[i] = 0
+        
+        for letter in text:
+            if letter in letters:
+                letters[letter] += 1
+            else:
+                continue
+    
+    else:
+        letters = dict()
+        text = text.split(' ')
+        
+        for letter in text:
+            if letter in letters:
+                letters[letter] += 1
+            else:
+                letters[letter] = 1
     # Makes a dictionary with all the words with their frequencies
     
     sortedletters = sorted(letters.items(),key= lambda item: item[1])
@@ -47,6 +61,12 @@ def caesardecrypt(text,key):
     return new_text
 
 def innerproduct_vectors(alpha,beta):
+
+    list(alpha)
+    list(beta)
+    print(alpha)
+    print(beta)
+    
     if len(alpha) != len(beta):
         print('ERROR: vector lengths do not match')
         print('Vector a:',alpha)
@@ -178,9 +198,53 @@ def wordfreq(text):
 
 # CODE
 
-cipher = """text"""
+cipher = """Prime Minister Sir Keir Starmer has paid back more than £6,000 worth of gifts and hospitality received since becoming prime minister, following a backlash over donations.
+
+The prime minister is covering the cost of six Taylor Swift tickets, four tickets to the races and a clothing rental agreement with a high-end designer favoured by his wife, Lady Victoria Starmer.
+
+It comes after Sir Keir and other cabinet ministers have faced weeks of criticism for accepting freebies from wealthy donors.
+
+Sir Keir has committed to tightening the rules around ministerial hospitality to improve transparency.
+
+Speaking in Brussels on Wednesday, the prime minister said his government would bring forward new principles for donations "as until now politicians have used their best individual judgement to decide".
+
+"I took the decision that until those principles were in place it was right to repay these particular payments,” he said.
+
+Earlier, a Downing Street spokesperson confirmed that the ministerial code will be updated and will include “a new set of principles on gifts and hospitality” commissioned by Sir Keir.
+
+"Ahead of the publication of the new code, the prime minister has paid for several entries on his own register.
+
+"This will appear in the next register of members' interests."
+
+The gifts Starmer has paid for include four Taylor Swift tickets from Universal Music Group worth £2,800, two from the Football Association at a cost of £598, and four to Doncaster Races from Arena Racing Corporation at £1,939.
+
+An £839 clothing rental agreement with Edeline Lee, the designer recently worn by his wife to London Fashion Week, along with one hour of hair and makeup, was also covered by the prime minister.
+
+Sir Keir has also accepted a further £6,134 in "clothing and personal support" for Lady Starmer in June, from Labour donor Lord Alli.
+
+The details of the donations have been published, external in the latest register of interests for MPs on Wednesday.
+
+It comes as Parliament's standards watchdog said Lord Alli was being investigated over allegedly failing to register interests.
+
+A complaint was made during the last week about the Labour donor, who has been at the centre of a row over his donations to Sir Keir and other MPs.
+
+Sir Keir has said he will not accept donations of clothing as prime minister.
+
+When asked about the Lord Alli probe, he said: "I'm not going to comment on Lord Alli. The investigation will run its course."
+
+Last month, Sir Keir told the BBC he had accepted the donation for clothing in opposition, during a "busy election campaign".
+
+The latest register of interest also shows Deputy Prime Minister Angela Rayner declared £836 in hospitality as a "visit to (a) DJ booth".
+
+The registration relates to a trip to a nightclub where Rayner was filmed dancing and being cheered on by the crowd over summer.
+
+The name of the donor listed on the latest register of interests is Ayita LLC."""
 
 
+ft = charfreq(cipher,1)
+fb = charfreq(brown_corpus,1)
+
+print(cosineangle_vectors(ft.values(), fb.values()))
 
 
 
