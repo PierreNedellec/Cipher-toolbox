@@ -16,6 +16,17 @@ letters = list(string.ascii_uppercase)
 
 # FUNCTIONS
 
+def sortdict(mydict):
+    # Will sort dictionaries according to their value, not their key
+    
+    sorteddict = sorted(mydict.items(),key= lambda item: item[1])
+    sorteddict = dict(sorteddict[::-1])
+    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
+            
+    return sorteddict
+
+
+
 def charfreq(text,lettersonly=False):
     text = text.upper()
     
@@ -42,11 +53,8 @@ def charfreq(text,lettersonly=False):
                 letters[letter] = 1
     # Makes a dictionary with all the words with their frequencies
     
-    sortedletters = sorted(letters.items(),key= lambda item: item[1])
-    sortedletters = dict(sortedletters[::-1])
-    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
-            
-    return sortedletters
+    return letters
+
 
 def caesardecrypt(text,key):
     key = key%26
@@ -185,11 +193,7 @@ def wordfreq(text):
             words[word] = 1
     # Makes a dictionary with all the words with their frequencies
     
-    sortedwords = sorted(words.items(),key= lambda item: item[1])
-    sortedwords = dict(sortedwords[::-1])
-    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
-            
-    return sortedwords
+    return words
 
 def dict2valuelist(mydict):
     out = []
