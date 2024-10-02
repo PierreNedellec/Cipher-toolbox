@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import string
+from math import sqrt
 
 # VARIABLES
 
@@ -33,7 +34,7 @@ def charfreq(text):
             
     return sortedletters
 
-def cshift(text,key):
+def caesardecrypt(text,key):
     key = key%26
     new_text = ''
     for character in text:
@@ -45,10 +46,38 @@ def cshift(text,key):
         new_text += new_character
     return new_text
 
-def allcshifts(text):
+def innerproduct_vectors(alpha,beta):
+    if len(alpha) != len(beta):
+        print('ERROR: vector lengths do not match')
+        print('Vector a:',alpha)
+        print('Vector b:',beta)
+        return
+    
+    length = len(alpha)
+    total = 0
+    
+    for item in range(length):
+        product = alpha[item]*beta[item]
+        total += product
+    return total
+
+def cosineangle_vectors(a,b):
+    abinner = innerproduct_vectors(a, b)
+    ainner = innerproduct_vectors(a, a)
+    binner = innerproduct_vectors(b, b)
+    
+    denominator = sqrt(ainner*binner)
+    
+    return abinner/denominator
+
+
+def brutecaesardecrypt(text):
+    return
+
+def allcaesars(text):
     for a in range(26):
         print('shift',a,end=' --> ')
-        print(cshift(text,a))
+        print(caesardecrypt(text,a))
 
 def affineinverse(alpha):
     # a*d = 1 mod 26. We want to find d
@@ -150,45 +179,6 @@ def wordfreq(text):
 # CODE
 
 cipher = """text"""
-
-
-
-
-
-
-
-f = open('english_words_frequencies.txt','r').read()
-f = f.split(' ')
-num = [a for a in range(10)]
-
-for b in f:
-    flag = False
-    for c in num:
-        if str(c) in b:
-            flag = True
-    if flag:
-        f.remove(b)
-
-n = ''
-for a in f:
-    a += ' '
-    n += a
-
-
-h = open('english_words_frequencies.txt','w')
-h.write(n)
-
-
-
-f = sorted(f)
-
-g = open('english_words_alphabetical.txt','w')
-n = ''
-for a in f:
-    a += ' '
-    n += a
-    
-g.write(n)
 
 
 
