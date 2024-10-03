@@ -6,7 +6,9 @@ from math import sqrt
 
 # VARIABLES
 
-
+global english_monogram_frequencies_inner_product
+english_monogram_frequencies_inner_product = 1477094937415
+# Previously calculated
 
 global brown_corpus
 brown_corpus = open('brown_corpus_words.txt','r').read()
@@ -58,7 +60,6 @@ def charfreq(text,lettersonly=False):
 
 
 def innerproduct_vectors(alpha,beta):
-    
     if len(alpha) != len(beta):
         print('ERROR: vector lengths do not match')
         print('Vector a:',alpha)
@@ -73,11 +74,14 @@ def innerproduct_vectors(alpha,beta):
         total += product
     return total
 
-def cosineangle_vectors(a,b):
+def cosineangle_vectors(a,b = english_monogram_frequencies_inner_product):
     # This calcualtes the angle between two vectors
+    if type(a) and type(b) == list:
+        binner = innerproduct_vectors(b, b)
+    else:
+        binner = b
     abinner = innerproduct_vectors(a, b)
     ainner = innerproduct_vectors(a, a)
-    binner = innerproduct_vectors(b, b)
     
     denominator = sqrt(ainner*binner)
     
@@ -94,9 +98,6 @@ def dict2valuelist(mydict):
 
 global english_monogram_frequencies
 english_monogram_frequencies = charfreq(brown_corpus,1)
-
-global english_monogram_frequencies_inner_product
-english_monogram_frequencies_inner_product = innerproduct_vectors(dict2valuelist(english_monogram_frequencies),dict2valuelist(english_monogram_frequencies))
 
 
 
@@ -230,7 +231,7 @@ def wordfreq(text):
 def monogramfitness(text):
     ft = charfreq(text,1)
 
-    return (cosineangle_vectors(dict2valuelist(ft), english_monogram_frequencies_inner_product()))
+    return (cosineangle_vectors(dict2valuelist(ft), english_monogram_frequencies_inner_product))
 
 
 # CODE
@@ -238,9 +239,9 @@ def monogramfitness(text):
 cipher = open('cipher.txt','r').read()
 
 
-text, ky = brutecaesardecrypt(cipher)
-print(text)
-print('key:',ky)
+#text, ky = brutecaesardecrypt(cipher)
+#print(text)
+#print('key:',ky)
 
 
 
