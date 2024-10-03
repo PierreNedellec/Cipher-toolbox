@@ -57,28 +57,6 @@ def charfreq(text,lettersonly=False):
     return letters
 
 
-
-
-global english_monogram_frequencies
-english_monogram_frequencies = charfreq(brown_corpus,1)
-
-
-
-
-def caesardecrypt(text,key):
-    text = text.upper()
-    
-    key = key%26
-    new_text = ''
-    for character in text:
-        if character not in english_letters:
-            new_text += character
-            continue
-        new_character = english_letters.index(character) - key
-        new_character = english_letters[new_character%26]
-        new_text += new_character
-    return new_text
-
 def innerproduct_vectors(alpha,beta):
     
     if len(alpha) != len(beta):
@@ -104,6 +82,38 @@ def cosineangle_vectors(a,b):
     denominator = sqrt(ainner*binner)
     
     return abinner/denominator
+
+
+def dict2valuelist(mydict):
+    out = []
+    for keys, values in mydict.items():
+        out.append(values)
+        
+    return out
+
+
+global english_monogram_frequencies
+english_monogram_frequencies = charfreq(brown_corpus,1)
+
+global english_monogram_frequencies_inner_product
+english_monogram_frequencies_inner_product = innerproduct_vectors(dict2valuelist(english_monogram_frequencies),dict2valuelist(english_monogram_frequencies))
+
+
+
+
+def caesardecrypt(text,key):
+    text = text.upper()
+    
+    key = key%26
+    new_text = ''
+    for character in text:
+        if character not in english_letters:
+            new_text += character
+            continue
+        new_character = english_letters.index(character) - key
+        new_character = english_letters[new_character%26]
+        new_text += new_character
+    return new_text
 
 
 def brutecaesardecrypt(text):
@@ -215,21 +225,12 @@ def wordfreq(text):
         else:
             words[word] = 1
     # Makes a dictionary with all the words with their frequencies
-    
     return words
-
-def dict2valuelist(mydict):
-    out = []
-    for keys, values in mydict.items():
-        out.append(values)
-        
-    return out
 
 def monogramfitness(text):
     ft = charfreq(text,1)
-    fb = english_monogram_frequencies
 
-    return (cosineangle_vectors(dict2valuelist(ft), dict2valuelist(fb)))
+    return (cosineangle_vectors(dict2valuelist(ft), english_monogram_frequencies_inner_product()))
 
 
 # CODE
