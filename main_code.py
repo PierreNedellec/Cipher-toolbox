@@ -18,6 +18,32 @@ english_letters = list(string.ascii_uppercase)
 
 # FUNCTIONS
 
+def formatcorpus(text):
+    corpus = text
+    
+    pun = string.punctuation
+    pun = list(pun)
+    
+    for item in pun:
+        if item == '-' or item == "'":
+            continue        
+        corpus = corpus.replace(item,'')
+        
+    corpus = corpus.replace("""'s""",'')
+    corpus = corpus.replace("""s'""",'s')
+    corpus = corpus.replace("'",'')
+    corpus = corpus.replace('\n',' ')
+    corpus = corpus.replace('- ',' ')
+    corpus = corpus.replace(' -',' ')
+    #corpus = corpus.replace('-',' ')
+    # Removing all hyphens that are not in the middle of a word
+    while '  ' in corpus:
+        corpus = corpus.replace('  ',' ')
+    corpus = corpus.upper()
+    
+    return corpus
+
+
 def sortdict(mydict):
     # Will sort dictionaries according to their value, not their key
     
@@ -33,26 +59,17 @@ def monogramfreq(text,lettersonly=False):
     text = text.upper()
     
     if lettersonly:
-        keys = list(string.ascii_uppercase)
-        letters = dict()
-        for i in keys:
-           letters[i] = 0
-        
-        for letter in text:
-            if letter in letters:
-                letters[letter] += 1
-            else:
-                continue
+        text = formatcorpus(text)
+        text = text.replace(' ','')
+        text = text.replace('\n','')
     
-    else:
-        letters = dict()
-        text = text.split(' ')
-        
-        for letter in text:
-            if letter in letters:
-                letters[letter] += 1
-            else:
-                letters[letter] = 1
+    letters = dict()
+    
+    for letter in text:
+        if letter in letters:
+            letters[letter] += 1
+        else:
+            letters[letter] = 1
     # Makes a dictionary with all the letters with their frequencies
     return letters
 
@@ -150,7 +167,12 @@ def autoaffinedecrypt(text):
     decrypt = 'not found'
     t = sortdict(trigramfreq(text,1))
     crib_the = dict2keylist(t)[0]
-    print(crib_the)
+    # Most common trigram identified.
+    
+    # x denotes plaintext letter. y denotes encrypted letter. alpha and beta are the keys. y = alphax + beta
+    xone = english_letters.index('T')
+    xtwo = english_letters.index('E')
+    
 
 def allcaesars(text):
     for a in range(26):
@@ -211,30 +233,7 @@ def monoalphabeticdecrypt(text,key):
         new_text += new_character
     print(new_text)
     
-def formatcorpus(text):
-    corpus = text
-    
-    pun = string.punctuation
-    pun = list(pun)
-    
-    for item in pun:
-        if item == '-' or item == "'":
-            continue        
-        corpus = corpus.replace(item,'')
-        
-    corpus = corpus.replace("""'s""",'')
-    corpus = corpus.replace("""s'""",'s')
-    corpus = corpus.replace("'",'')
-    corpus = corpus.replace('\n',' ')
-    corpus = corpus.replace('- ',' ')
-    corpus = corpus.replace(' -',' ')
-    #corpus = corpus.replace('-',' ')
-    # Removing all hyphens that are not in the middle of a word
-    while '  ' in corpus:
-        corpus = corpus.replace('  ',' ')
-    corpus = corpus.upper()
-    
-    return corpus
+
 
 def wordfreq(text):
     words = dict()
