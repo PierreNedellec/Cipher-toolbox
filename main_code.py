@@ -60,8 +60,8 @@ def monogramfreq(text,lettersonly=False):
     
     if lettersonly:
         text = formatcorpus(text)
+        text = text.replace('-','')
         text = text.replace(' ','')
-        text = text.replace('\n','')
     
     letters = dict()
     
@@ -162,22 +162,6 @@ def brutecaesardecrypt(text):
         # Rotates the shift by 1 every time
     return decrypt, key
 
-def autoaffinedecrypt(text):
-    key = 'not found'
-    decrypt = 'not found'
-    t = sortdict(trigramfreq(text,1))
-    crib_the = dict2keylist(t)[0]
-    # Most common trigram identified.
-    
-    # x denotes plaintext letter. y denotes encrypted letter. alpha and beta are the keys. y = alphax + beta
-    xone = english_letters.index('T')
-    xtwo = english_letters.index('E')
-    
-
-def allcaesars(text):
-    for a in range(26):
-        print('shift',a,end=' --> ')
-        print(caesardecrypt(text,a))
 
 def affineinverse(alpha):
     # a*d = 1 mod 26. We want to find d
@@ -185,6 +169,40 @@ def affineinverse(alpha):
     while (alpha*d)%26 != 1:
         d += 1
     return d
+
+
+def autoaffinedecrypt(text):
+    key = 'not found'
+    decrypt = 'not found'
+    t = sortdict(trigramfreq(text,1))
+    crib_the = dict2keylist(t)[0]
+    # Most common trigram identified.
+    # Must also check this crib w/ monogram frequency
+    
+    # x denotes plaintext letter. y denotes encrypted letter. alpha and beta are the keys. y = alphax + beta
+    xone = english_letters.index('T')
+    xtwo = english_letters.index('E')
+    yone = english_letters.index(crib_the[0])
+    ytwo = english_letters.index(crib_the[2])
+    # alpha(xtwo-xone) = ytwo-yone
+    diffx = (xtwo - xone)%26
+    diffy = (ytwo - yone)%26
+    alpha = (diffy * affineinverse(diffx))%26
+    # Instead of dividing, which we can't do in modular arithmetic, both sides are multiplied by a number, which gives the same practical result as dividing in normal arithmetic.
+    beta = (((alpha*xtwo)%26) - ytwo)%26 - 20
+    key = [alpha,beta]
+    decrypt = affinedecrypt(text,key[0],key[1])
+    
+    return key, decrypt
+    
+    
+
+def allcaesars(text):
+    for a in range(26):
+        print('shift',a,end=' --> ')
+        print(caesardecrypt(text,a))
+
+
 
 def affinedecrypt(text,a,b):
     # y = ax + b
@@ -259,7 +277,7 @@ def monogramfitness(text):
 
 cipher = open('cipher.txt','r').read()
 
-autoaffinedecrypt(cipher)
+print(autoaffinedecrypt(cipher))
 
 
 
