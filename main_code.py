@@ -105,9 +105,13 @@ def dict2valuelist(mydict):
     out = []
     for keys, values in mydict.items():
         out.append(values)
-        
     return out
 
+def dict2keylist(mydict):
+    out = []
+    for keys, values in mydict.items():
+        out.append(keys)
+    return out
 
 global english_monogram_frequencies
 english_monogram_frequencies = monogramfreq(brown_corpus,1)
@@ -144,6 +148,9 @@ def brutecaesardecrypt(text):
 def autoaffinedecrypt(text):
     key = 'not found'
     decrypt = 'not found'
+    t = sortdict(trigramfreq(text,1))
+    crib_the = dict2keylist(t)[0]
+    print(crib_the)
 
 def allcaesars(text):
     for a in range(26):
@@ -171,6 +178,7 @@ def affinedecrypt(text,a,b):
     return new_text
 
 def charreplace(text,characters):
+ 
     # characters in format [[A,B,C,D,...][A1,B1,C1,..]] A... etc to be replaced with A1...
     for option in range(2):
         new_text = ''
@@ -191,7 +199,6 @@ def charreplace(text,characters):
         print('')
         print('----------------------------------------------')
         print('')
-        
 def monoalphabeticdecrypt(text,key):
     key = list(key)
     
@@ -253,11 +260,7 @@ def monogramfitness(text):
 
 cipher = open('cipher.txt','r').read()
 
-d = trigramfreq(cipher,1)
-
-for a in d.items() :
-    if a[1] > 5 :
-        print(a)
+autoaffinedecrypt(cipher)
 
 
 
