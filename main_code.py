@@ -29,7 +29,7 @@ def sortdict(mydict):
 
 
 
-def charfreq(text,lettersonly=False):
+def monogramfreq(text,lettersonly=False):
     text = text.upper()
     
     if lettersonly:
@@ -53,10 +53,26 @@ def charfreq(text,lettersonly=False):
                 letters[letter] += 1
             else:
                 letters[letter] = 1
-    # Makes a dictionary with all the words with their frequencies
-    
+    # Makes a dictionary with all the letters with their frequencies
     return letters
 
+def trigramfreq(text,lettersonly=False):
+    text = text.upper()
+    
+    if lettersonly:
+        text = formatcorpus(text)
+        text = text.replace(' ','')
+        text = text.replace('\n','')
+    
+    trigrams = dict()
+    
+    for pos in range(len(text)-2):
+        if text[pos:pos+3] in trigrams:
+            trigrams[text[pos:pos+3]] += 1
+        else:
+            trigrams[text[pos:pos+3]] = 1
+    # Makes a dictionary with all the trigrams with their frequencies
+    return trigrams
 
 def innerproduct_vectors(alpha,beta):
     if len(alpha) != len(beta):
@@ -94,7 +110,7 @@ def dict2valuelist(mydict):
 
 
 global english_monogram_frequencies
-english_monogram_frequencies = charfreq(brown_corpus,1)
+english_monogram_frequencies = monogramfreq(brown_corpus,1)
 
 
 
@@ -123,10 +139,11 @@ def brutecaesardecrypt(text):
             key = k
         text = caesardecrypt(text,1)
         # Rotates the shift by 1 every time
-    
-    
-    
     return decrypt, key
+
+def autoaffinedecrypt(text):
+    key = 'not found'
+    decrypt = 'not found'
 
 def allcaesars(text):
     for a in range(26):
@@ -187,8 +204,8 @@ def monoalphabeticdecrypt(text,key):
         new_text += new_character
     print(new_text)
     
-def formatcorpus(file):
-    corpus = open(file,'r').read()
+def formatcorpus(text):
+    corpus = text
     
     pun = string.punctuation
     pun = list(pun)
@@ -226,7 +243,7 @@ def wordfreq(text):
     return words
 
 def monogramfitness(text):
-    ft = dict2valuelist(charfreq(text,1))
+    ft = dict2valuelist(monogramfreq(text,1))
     fb = dict2valuelist(english_monogram_frequencies)
 
     return (cosineangle_vectors(ft,fb))
@@ -236,10 +253,11 @@ def monogramfitness(text):
 
 cipher = open('cipher.txt','r').read()
 
+d = trigramfreq(cipher,1)
 
-text, ky = brutecaesardecrypt(cipher)
-print(text)
-print('key:',ky)
+for a in d.items() :
+    if a[1] > 5 :
+        print(a)
 
 
 
