@@ -97,15 +97,25 @@ def trigramfreq(text,lettersonly=False):
     # Makes a dictionary with all the trigrams with their frequencies
     return trigrams
 
-def englishquadragrams():
-    doc = open('english_quadragrams_frequencies.txt','r')
+def englishquadragrams(spaces = False, log = False):
+    if spaces:
+        if log:
+            doc = open('english_quadragrams_frequencies_spaces_logvalues.txt','r')
+        else:
+            doc = open('english_quadragrams_frequencies_spaces.txt','r')
+    else:
+        if log:
+            doc = open('english_quadragrams_frequencies_logvalues.txt','r')
+        else:  
+            doc = open('english_quadragrams_frequencies.txt','r')
     quaddict = {}
     
     for item in doc.readlines():
         item = item.replace('\n','')
-        item = item.split(' ')
+        item = item.split(';')
         quaddict[item[0]] = item[1]
     return quaddict
+
 
 def innerproduct_vectors(alpha,beta):
     if len(alpha) != len(beta):
@@ -346,5 +356,5 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-print(englishquadragrams())
+print(englishspacequadragrams())
 
