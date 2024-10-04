@@ -18,6 +18,10 @@ english_letters = list(string.ascii_uppercase)
 
 # FUNCTIONS
 
+def ciphertext():
+    return open('cipher.txt','r').read()
+
+
 def formatcorpus(text):
     corpus = text
     
@@ -62,6 +66,8 @@ def monogramfreq(text,lettersonly=False):
         text = formatcorpus(text)
         text = text.replace('-','')
         text = text.replace(' ','')
+        for a in range(10):
+            text = text.replace(str(a),'')
     
     letters = dict()
     
@@ -153,14 +159,14 @@ def caesardecrypt(text,key):
 
 def brutecaesardecrypt(text):
     key = 'not found'
-    decrypt = 'not found: try decreasing the threshold'
+    decrypt = 'not found'
     for k in range(26):
-        if monogramfitness(text) > 0.8:
+        if monogramfitness(text) > 0.9:
             decrypt = text
             key = k
         text = caesardecrypt(text,1)
         # Rotates the shift by 1 every time
-    return decrypt, key
+    return  key,decrypt
 
 
 def affineinverse(alpha):
@@ -272,12 +278,65 @@ def monogramfitness(text):
 
     return (cosineangle_vectors(ft,fb))
 
+def GUI():
+    option = input('''
+Welcome to your cipher toolbox.
+Select an option:
+    (1) Decryption
+    (2) Encryption
+    (3) Text analysis
+    ''')
+              
+    if option == '1':
+        GUI_decrypt()
+    elif option == '2':
+        GUI_encrypt()
+    elif option == '3':
+        GUI_analysis()
+    else:
+        GUI()
+    
+def GUI_decrypt():
+    option = input('''
+Select an option:
+    (1) Caesar decrypt
+    (2) Affine decrypt
+    (3) Keyword cipher help
+    (4) Back to main menu
+    ''')
+                   
+    if option == '1':
+        solved = brutecaesardecrypt(ciphertext())
+        print(solved[1])
+        print('key:',solved[0])
+    elif option == '2':
+        solved = autoaffinedecrypt(ciphertext())
+        print(solved[1])
+        print('key:',solved[0])
+    elif option == '3':
+        monoalphabetickeyword_help()
+    elif option == '4':
+        GUI()
+    else:
+        GUI_decrypt()
+        
+def GUI_encrypt():
+    print('Feature coming soon.')
+    GUI()
+    
+    
+def GUI_analysis():
+    print('Feature coming soon')
+    GUI()
+    
+
+def monoalphabetickeyword_help():
+    print('Feature coming soon')
+    GUI()
 
 # CODE
 
-cipher = open('cipher.txt','r').read()
-
-print(autoaffinedecrypt(cipher))
+GUI()
 
 
 
