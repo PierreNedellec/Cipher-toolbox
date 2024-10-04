@@ -171,6 +171,21 @@ def affineinverse(alpha):
     return d
 
 
+def affinedecrypt(text,a,b):
+    text = text.upper()
+    # y = ax + b
+    new_text = ''
+    for character in text:
+        if character not in english_letters:
+            new_text += character
+            continue
+        new_character = english_letters.index(character) - b
+        new_character = new_character*affineinverse(a)
+        new_character = english_letters[new_character%26]
+        new_text += new_character
+    return new_text
+
+
 def autoaffinedecrypt(text):
     key = 'not found'
     decrypt = 'not found'
@@ -189,7 +204,7 @@ def autoaffinedecrypt(text):
     diffy = (ytwo - yone)%26
     alpha = (diffy * affineinverse(diffx))%26
     # Instead of dividing, which we can't do in modular arithmetic, both sides are multiplied by a number, which gives the same practical result as dividing in normal arithmetic.
-    beta = (((alpha*xtwo)%26) - ytwo)%26 - 20
+    beta = ((ytwo - (alpha*xtwo)%26))%26
     key = [alpha,beta]
     decrypt = affinedecrypt(text,key[0],key[1])
     
@@ -201,21 +216,6 @@ def allcaesars(text):
     for a in range(26):
         print('shift',a,end=' --> ')
         print(caesardecrypt(text,a))
-
-
-
-def affinedecrypt(text,a,b):
-    # y = ax + b
-    new_text = ''
-    for character in text:
-        if character not in english_letters:
-            new_text += character
-            continue
-        new_character = english_letters.index(character) - b
-        new_character = new_character*affineinverse(a)
-        new_character = english_letters[new_character%26]
-        new_text += new_character
-    return new_text
 
 def charreplace(text,characters):
  
