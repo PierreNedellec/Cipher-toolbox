@@ -40,6 +40,8 @@ def formatcorpus(text):
     corpus = corpus.replace('- ',' ')
     corpus = corpus.replace(' -',' ')
     #corpus = corpus.replace('-',' ')
+    for a in range(10):
+        corpus = corpus.replace(str(a),'')
     # Removing all hyphens that are not in the middle of a word
     while '  ' in corpus:
         corpus = corpus.replace('  ',' ')
@@ -66,8 +68,6 @@ def monogramfreq(text,lettersonly=False):
         text = formatcorpus(text)
         text = text.replace('-','')
         text = text.replace(' ','')
-        for a in range(10):
-            text = text.replace(str(a),'')
     
     letters = dict()
     
@@ -96,6 +96,16 @@ def trigramfreq(text,lettersonly=False):
             trigrams[text[pos:pos+3]] = 1
     # Makes a dictionary with all the trigrams with their frequencies
     return trigrams
+
+def englishquadragrams():
+    doc = open('english_quadragrams_frequencies.txt','r')
+    quaddict = {}
+    
+    for item in doc.readlines():
+        item = item.replace('\n','')
+        item = item.split(' ')
+        quaddict[item[0]] = item[1]
+    return quaddict
 
 def innerproduct_vectors(alpha,beta):
     if len(alpha) != len(beta):
@@ -336,7 +346,5 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-GUI()
-
-
+print(englishquadragrams())
 
