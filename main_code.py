@@ -100,14 +100,14 @@ def trigramfreq(text,lettersonly=False):
 def englishquadragrams(spaces = False, log = False):
     if spaces:
         if log:
-            doc = open('english_quadragrams_frequencies_spaces_logvalues.txt','r')
+            doc = open('english_quadragram_frequencies_spaces_logvalues.txt','r')
         else:
-            doc = open('english_quadragrams_frequencies_spaces.txt','r')
+            doc = open('english_quadragram_frequencies_spaces.txt','r')
     else:
         if log:
-            doc = open('english_quadragrams_frequencies_logvalues.txt','r')
+            doc = open('english_quadragram_frequencies_logvalues.txt','r')
         else:  
-            doc = open('english_quadragrams_frequencies.txt','r')
+            doc = open('english_quadragram_frequencies.txt','r')
     quaddict = {}
     
     for item in doc.readlines():
@@ -356,5 +356,4 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-print(englishspacequadragrams())
 
