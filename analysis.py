@@ -9,40 +9,38 @@ brown_corpus = open('brown_corpus_words.txt','r').read()
 
 
 def formatcorpus(text):
-    corpus = text
+    text = text.upper()
+    eletters = string.ascii_uppercase + ' '
     
-    pun = string.punctuation
-    pun = list(pun)
-    
-    for item in pun:
-        if item == '-' or item == "'":
-            continue        
-        corpus = corpus.replace(item,'')
-        
-    corpus = corpus.replace("""'s""",'')
-    corpus = corpus.replace("""s'""",'s')
-    corpus = corpus.replace("'",'')
-    corpus = corpus.replace('\n',' ')
-    corpus = corpus.replace('- ',' ')
-    corpus = corpus.replace(' -',' ')
-    corpus = corpus.replace('’','')
-    corpus = corpus.replace('“','')
-    corpus = corpus.replace('”','')
-    corpus = corpus.replace('‘','')
-    corpus = corpus.replace('Ï','I')
-    corpus = corpus.replace('É','E')
-    
-    #corpus = corpus.replace('-',' ')
-    for a in range(10):
-        corpus = corpus.replace(str(a),'')
-    # Removing all hyphens that are not in the middle of a word
-    while '  ' in corpus:
-        corpus = corpus.replace('  ',' ')
-    corpus = corpus.upper()
-    
-    return corpus
+    for a in range(3):
+        for j in range(len(text)):
+            s = 0
+            try:
+                if not text[j-s] in eletters:
+                    try:
+                        text = text.replace(text[j],'')
+                        s += 2
+                    except:
+                        continue
+            except:
+                continue
+        # This checks if a character is in the alphabet, if it isnt, it deletes it. The try statements is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
+    while '  ' in text:
+        text = text.replace('  ',' ')
+               
+    return text
 
 # Dictionary maniupulation
+
+def sortdict(mydict,mode=1):
+    # mode = 0 sorts by key, mode = 1 by value
+    
+    sorteddict = sorted(mydict.items(),key= lambda item: item[mode])
+    sorteddict = dict(sorteddict[::-1])
+    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
+            
+    return sorteddict
+
 
 def dict2valuelist(mydict):
     out = []
@@ -74,28 +72,21 @@ def wordfreq(text):
     return words
 
 
-def monogramfreq(text,lettersonly=True):
+def monogramfreq(text,spacesincluded=False):
     text = text.upper()
-    eletters = string.ascii_uppercase
+    eletters = string.ascii_uppercase + ' '
 
-    if lettersonly:
-        letters = {}
-        for i in eletters:
-            letters[i] = 0
-            
-        for letter in text:
-            if letter in eletters:
-                letters[letter] += 1
-                
-        return letters
-    
-    letters = dict()
-    
+    if not spacesincluded:
+        eletters = string.ascii_uppercase
+        
+    letters = {}
+    for i in eletters:
+        letters[i] = 0
+        
     for letter in text:
-        if letter in letters:
+        if letter in eletters:
             letters[letter] += 1
-        else:
-            letters[letter] = 1
+            
     # Makes a dictionary with all the letters with their frequencies
     return letters
 
@@ -147,12 +138,13 @@ def cosineangle_vectors(a,b,c = english_monogram_frequencies_inner_product):
     return abinner/denominator
 
 global english_monogram_frequencies
-english_monogram_frequencies = monogramfreq(brown_corpus,1)
+english_monogram_frequencies = monogramfreq(brown_corpus,0)
 
-def monogramfitness(text):
-    ft = dict2valuelist(monogramfreq(text,1))
+def monogramfitness(text,s):
+    ft = dict2valuelist(monogramfreq(text,s))
     fb = dict2valuelist(english_monogram_frequencies)
-
+    if s:
+        fb = dict2valuelist(monogramfreq(brown_corpus,s))
     return (cosineangle_vectors(ft,fb))
 
 
@@ -184,33 +176,46 @@ def quadragramfitness(text, spaces = False):
     
     eletters = string.ascii_uppercase
            
-    text = text.replace('-','')
-    text = text.replace('\n','')
     if not spaces:
         text = text.replace(' ','')
     else:
         eletters += ' '
 
     
-    for j in range(len(text)):
-        if not text[j] in eletters:
-            try:
-                text = text.replace(text[j],'')
-            except:
-                continue
-    # This checks if a character is in the alphabet, if it isnt, it deletes it. The final try statement is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
-            
     qdict = englishquadragrams(spaces,1)
     qlist = dict2valuelist(qdict)
     sum = 0.0
             
     for i in range(len(text)-3):
-        quad = eletters.index(text[i])*26*26*26 
-        + eletters.index(text[i+1])*26*26
-        + eletters.index(text[i+2])*26
-        + eletters.index(text[i+3])
+        try:
+            quad = eletters.index(text[i])*26*26*26 
+            + eletters.index(text[i+1])*26*26
+            + eletters.index(text[i+2])*26
+            + eletters.index(text[i+3])
+        except:
+            print(text[i+3])
         
         sum+= float(qlist[quad])
         
     return (sum/(len(text)-3))
+
+# Index of coincidence
+
+def ioc(text, spacesincluded = False):
+    text = formatcorpus(text)
+    fac = 27
+    if not spacesincluded:
+        text.replace(' ','')
+        fac = 26
+        
+    df = monogramfreq(text,spacesincluded)
+    l = 0
+    sum = 0
+    
+    for k,v in df.items():
+        l += v
+        sum += v*(v-1)
+    sum /= (l*(l-1))
+    
+    return fac * sum
 

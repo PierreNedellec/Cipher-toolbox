@@ -18,34 +18,29 @@ english_letters = list(string.ascii_uppercase)
 # FUNCTIONS
 
 def ciphertext():
-    return open('cipher.txt','r', encoding='utf8').read()
+    return open('brown_corpus_words.txt','r', encoding='utf8').read()
 
 
 def formatcorpus(text):
-    corpus = text
+    text = text.upper()
+    eletters = string.ascii_uppercase + ' '
     
-    pun = string.punctuation
-    pun = list(pun)
+    for j in range(len(text)):
+        try:
+            if not text[j] in eletters:
+                try:
+                    text = text.replace(text[j],'')
+                except:
+                    continue
+        except:
+            continue
     
-    for item in pun:
-        if item == '-' or item == "'":
-            continue        
-        corpus = corpus.replace(item,'')
-    for a in range(10):
-        corpus = corpus.replace(str(a),'')
-    corpus = corpus.replace("""'s""",'')
-    corpus = corpus.replace("""s'""",'s')
-    corpus = corpus.replace("'",'')
-    corpus = corpus.replace('\n',' ')
-    corpus = corpus.replace('- ',' ')
-    corpus = corpus.replace(' -',' ')
-    #corpus = corpus.replace('-',' ')
-    # Removing all hyphens that are not in the middle of a word
-    while '  ' in corpus:
-        corpus = corpus.replace('  ',' ')
-    corpus = corpus.upper()
+    while '  ' in text:
+        text = text.replace('  ',' ')
+    # This checks if a character is in the alphabet, if it isnt, it deletes it. The try statements is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
+            
     
-    return corpus
+    return text
 
 
 def sortdict(mydict):
@@ -237,14 +232,19 @@ def GUI_encrypt():
     
     
 def GUI_analysis():
-    mf = analysis.monogramfitness(ciphertext())
-    qf = analysis.quadragramfitness(ciphertext())
-    ioc = 0
+    spacesincluded = input('''Include spaces?
+    (0) No
+    (1) Yes''')
+    mf = analysis.monogramfitness(ciphertext(),spacesincluded)
+    qf = analysis.quadragramfitness(ciphertext(),spacesincluded)
+    ioc = analysis.ioc(ciphertext(),spacesincluded)
+    mf = round(mf,3)
+    qf = round(qf,4)
+    ioc = round(ioc,3)
     print('''Performing analysis...
-    Monogram fitness:''',str(mf) + '''
-    Quadragram fitness:''',str(qf)+'''
-    Index of coincidence:''',str(ioc))
-    GUI()
+    Monogram fitness:''',str(mf),'Eng: 0.996, Rand: 0.76' + '''
+    Quadragram fitness:''',str(qf),'Eng: -16.49, Rand: -16.72'+'''
+    Index of coincidence:''',str(ioc),'Eng: 1.7, Rand: 1.0''')
     
 
 def monoalphabetickeyword_help():
