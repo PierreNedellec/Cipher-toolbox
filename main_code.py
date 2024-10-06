@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import string
-from math import sqrt
+import analysis
 
 # VARIABLES
 
-global english_monogram_frequencies_inner_product
-english_monogram_frequencies_inner_product = 1477094937415
+
 # Previously calculated
 
 global brown_corpus
@@ -19,7 +18,7 @@ english_letters = list(string.ascii_uppercase)
 # FUNCTIONS
 
 def ciphertext():
-    return open('cipher.txt','r').read()
+    return open('cipher.txt','r', encoding='utf8').read()
 
 
 def formatcorpus(text):
@@ -32,7 +31,8 @@ def formatcorpus(text):
         if item == '-' or item == "'":
             continue        
         corpus = corpus.replace(item,'')
-        
+    for a in range(10):
+        corpus = corpus.replace(str(a),'')
     corpus = corpus.replace("""'s""",'')
     corpus = corpus.replace("""s'""",'s')
     corpus = corpus.replace("'",'')
@@ -40,8 +40,6 @@ def formatcorpus(text):
     corpus = corpus.replace('- ',' ')
     corpus = corpus.replace(' -',' ')
     #corpus = corpus.replace('-',' ')
-    for a in range(10):
-        corpus = corpus.replace(str(a),'')
     # Removing all hyphens that are not in the middle of a word
     while '  ' in corpus:
         corpus = corpus.replace('  ',' ')
@@ -61,89 +59,6 @@ def sortdict(mydict):
 
 
 
-def monogramfreq(text,lettersonly=False):
-    text = text.upper()
-    
-    if lettersonly:
-        text = formatcorpus(text)
-        text = text.replace('-','')
-        text = text.replace(' ','')
-    
-    letters = dict()
-    
-    for letter in text:
-        if letter in letters:
-            letters[letter] += 1
-        else:
-            letters[letter] = 1
-    # Makes a dictionary with all the letters with their frequencies
-    return letters
-
-def trigramfreq(text,lettersonly=False):
-    text = text.upper()
-    
-    if lettersonly:
-        text = formatcorpus(text)
-        text = text.replace(' ','')
-        text = text.replace('\n','')
-    
-    trigrams = dict()
-    
-    for pos in range(len(text)-2):
-        if text[pos:pos+3] in trigrams:
-            trigrams[text[pos:pos+3]] += 1
-        else:
-            trigrams[text[pos:pos+3]] = 1
-    # Makes a dictionary with all the trigrams with their frequencies
-    return trigrams
-
-def englishquadragrams(spaces = False, log = False):
-    if spaces:
-        if log:
-            doc = open('english_quadragram_frequencies_spaces_logvalues.txt','r')
-        else:
-            doc = open('english_quadragram_frequencies_spaces.txt','r')
-    else:
-        if log:
-            doc = open('english_quadragram_frequencies_logvalues.txt','r')
-        else:  
-            doc = open('english_quadragram_frequencies.txt','r')
-    quaddict = {}
-    
-    for item in doc.readlines():
-        item = item.replace('\n','')
-        item = item.split(';')
-        quaddict[item[0]] = item[1]
-    return quaddict
-
-
-def innerproduct_vectors(alpha,beta):
-    if len(alpha) != len(beta):
-        print('ERROR: vector lengths do not match')
-        print('Vector a:',alpha)
-        print('Vector b:',beta)
-        return
-    
-    length = len(alpha)
-    total = 0
-    
-    for item in range(length):
-        product = alpha[item]*beta[item]
-        total += product
-    return total
-
-def cosineangle_vectors(a,b,c = english_monogram_frequencies_inner_product):
-    # This calcualtes the angle between two vectors
-
-    binner = c
-    abinner = innerproduct_vectors(a, b)
-    ainner = innerproduct_vectors(a, a)
-    
-    denominator = sqrt(ainner*binner)
-    
-    return abinner/denominator
-
-
 def dict2valuelist(mydict):
     out = []
     for keys, values in mydict.items():
@@ -156,8 +71,6 @@ def dict2keylist(mydict):
         out.append(keys)
     return out
 
-global english_monogram_frequencies
-english_monogram_frequencies = monogramfreq(brown_corpus,1)
 
 
 
@@ -181,7 +94,7 @@ def brutecaesardecrypt(text):
     key = 'not found'
     decrypt = 'not found'
     for k in range(26):
-        if monogramfitness(text) > 0.9:
+        if analysis.monogramfitness(text) > 0.9:
             decrypt = text
             key = k
         text = caesardecrypt(text,1)
@@ -215,7 +128,7 @@ def affinedecrypt(text,a,b):
 def autoaffinedecrypt(text):
     key = 'not found'
     decrypt = 'not found'
-    t = sortdict(trigramfreq(text,1))
+    t = sortdict(analysis.trigramfreq(text,1))
     crib_the = dict2keylist(t)[0]
     # Most common trigram identified.
     # Must also check this crib w/ monogram frequency
@@ -236,12 +149,7 @@ def autoaffinedecrypt(text):
     
     return key, decrypt
     
-    
 
-def allcaesars(text):
-    for a in range(26):
-        print('shift',a,end=' --> ')
-        print(caesardecrypt(text,a))
 
 def charreplace(text,characters):
  
@@ -265,9 +173,9 @@ def charreplace(text,characters):
         print('')
         print('----------------------------------------------')
         print('')
+        
+        
 def monoalphabeticdecrypt(text,key):
-    key = list(key)
-    
     new_text = ''
     for character in text:
         if character not in english_letters:
@@ -278,25 +186,8 @@ def monoalphabeticdecrypt(text,key):
     print(new_text)
     
 
+#GUIs
 
-def wordfreq(text):
-    words = dict()
-    if type(text) == str:
-        text = text.split(' ')
-    
-    for word in text:
-        if word in words:
-            words[word] += 1
-        else:
-            words[word] = 1
-    # Makes a dictionary with all the words with their frequencies
-    return words
-
-def monogramfitness(text):
-    ft = dict2valuelist(monogramfreq(text,1))
-    fb = dict2valuelist(english_monogram_frequencies)
-
-    return (cosineangle_vectors(ft,fb))
 
 def GUI():
     option = input('''
@@ -346,7 +237,13 @@ def GUI_encrypt():
     
     
 def GUI_analysis():
-    print('Feature coming soon')
+    mf = analysis.monogramfitness(ciphertext())
+    qf = analysis.quadragramfitness(ciphertext())
+    ioc = 0
+    print('''Performing analysis...
+    Monogram fitness:''',str(mf) + '''
+    Quadragram fitness:''',str(qf)+'''
+    Index of coincidence:''',str(ioc))
     GUI()
     
 
@@ -356,4 +253,4 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-
+GUI()
