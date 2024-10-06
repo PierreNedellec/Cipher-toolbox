@@ -143,7 +143,6 @@ def cosineangle_vectors(a,b,c = english_monogram_frequencies_inner_product):
     ainner = innerproduct_vectors(a, a)
     
     denominator = sqrt(ainner*binner)
-    print(abinner, denominator)
     
     return abinner/denominator
 
@@ -191,17 +190,19 @@ def quadragramfitness(text, spaces = False):
         text = text.replace(' ','')
     else:
         eletters += ' '
-    qdict = englishquadragrams(spaces,1)
-    qlist = dict2valuelist(qdict)
-    sum = 0.0
+
+    
     for j in range(len(text)):
-        try:
-            k = eletters.index(text[j])
-        except:
+        if not text[j] in eletters:
             try:
                 text = text.replace(text[j],'')
             except:
                 continue
+    # This checks if a character is in the alphabet, if it isnt, it deletes it. The final try statement is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
+            
+    qdict = englishquadragrams(spaces,1)
+    qlist = dict2valuelist(qdict)
+    sum = 0.0
             
     for i in range(len(text)-3):
         quad = eletters.index(text[i])*26*26*26 
