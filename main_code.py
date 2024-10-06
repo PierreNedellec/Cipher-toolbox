@@ -235,16 +235,19 @@ def GUI_analysis():
     spacesincluded = input('''Include spaces?
     (0) No
     (1) Yes''')
+    spacesincluded = bool(spacesincluded)
     mf = analysis.monogramfitness(ciphertext(),spacesincluded)
     qf = analysis.quadragramfitness(ciphertext(),spacesincluded)
     ioc = analysis.ioc(ciphertext(),spacesincluded)
+    print(ioc)
     mf = round(mf,3)
     qf = round(qf,4)
     ioc = round(ioc,3)
     print('''Performing analysis...
     Monogram fitness:''',str(mf),'Eng: 0.996, Rand: 0.76' + '''
     Quadragram fitness:''',str(qf),'Eng: -16.49, Rand: -16.72'+'''
-    Index of coincidence:''',str(ioc),'Eng: 1.7, Rand: 1.0''')
+    Index of coincidence:''',str(ioc),'''Eng: 1.7, Rand: 1.0
+    (Reference values assume spaces are excluded)''')
     
 
 def monoalphabetickeyword_help():
