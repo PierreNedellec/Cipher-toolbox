@@ -150,8 +150,8 @@ def monogramfitness(text,s):
 
 # Quadragram fitness
 
-def englishquadragrams(spaces = False, log = False):
-    if spaces:
+def englishquadragrams(spacesincluded = False, log = False):
+    if spacesincluded:
         if log:
             doc = open('english_quadragram_frequencies_spaces_logvalues.txt','r')
         else:
@@ -170,20 +170,19 @@ def englishquadragrams(spaces = False, log = False):
     return quaddict
 
 
-def quadragramfitness(text, spaces = False):
-    text = text.upper()
+def quadragramfitness(text, spacesincluded = False):
     text = formatcorpus(text)
     
     eletters = string.ascii_uppercase
            
-    if not spaces:
+    if not spacesincluded:
         text = text.replace(' ','')
     else:
         eletters += ' '
 
     
-    qdict = englishquadragrams(spaces,1)
-    qlist = dict2valuelist(qdict)
+    logtable = englishquadragrams(spacesincluded,1)
+    loglist = dict2valuelist(logtable)
     sum = 0.0
             
     for i in range(len(text)-3):
@@ -195,7 +194,7 @@ def quadragramfitness(text, spaces = False):
         except:
             print(text[i+3])
         
-        sum+= float(qlist[quad])
+        sum+= float(loglist[quad])
         
     return (sum/(len(text)-3))
 
