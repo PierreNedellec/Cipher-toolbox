@@ -176,6 +176,7 @@ def quadragramfitness(text, spacesincluded = False):
     eletters = string.ascii_uppercase
            
     if not spacesincluded:
+        # If you don't want spaces
         text = text.replace(' ','')
     else:
         eletters += ' '
@@ -184,19 +185,15 @@ def quadragramfitness(text, spacesincluded = False):
     logtable = englishquadragrams(spacesincluded,1)
     loglist = dict2valuelist(logtable)
     sum = 0.0
-            
+        
     for i in range(len(text)-3):
-        try:
-            quad = eletters.index(text[i])*26*26*26 
-            + eletters.index(text[i+1])*26*26
-            + eletters.index(text[i+2])*26
-            + eletters.index(text[i+3])
-        except:
-            print(text[i+3])
+        index = eletters.index(text[i])*26*26*26 
+        + eletters.index(text[i+1])*26*26
+        + eletters.index(text[i+2])*26
+        + eletters.index(text[i+3])
+        sum += float(loglist[index])
         
-        sum+= float(loglist[quad])
-        
-    return (sum/(len(text)-3))
+    return (sum/(len(text)-2))
 
 # Index of coincidence
 
