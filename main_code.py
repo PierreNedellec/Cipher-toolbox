@@ -236,9 +236,10 @@ def GUI_analysis():
     (0) No
     (1) Yes''')
     spacesincluded = bool(spacesincluded)
-    mf = analysis.monogramfitness(ciphertext(),spacesincluded)
-    qf = analysis.quadragramfitness(ciphertext(),spacesincluded)
-    ioc = analysis.ioc(ciphertext(),spacesincluded)
+    cipher = ciphertext().replace(' ','')
+    mf = analysis.monogramfitness(cipher,spacesincluded)
+    qf = analysis.quadragramfitness(cipher,spacesincluded)
+    ioc = analysis.ioc(cipher,spacesincluded)
     print(ioc)
     mf = round(mf,3)
     qf = round(qf,4)
