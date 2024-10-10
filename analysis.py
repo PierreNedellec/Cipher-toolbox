@@ -1,5 +1,6 @@
 from math import sqrt
 import string
+import numpy as np
 
 
 def formatcorpus(text):
@@ -161,23 +162,20 @@ def englishquadragrams(spacesincluded = False, log = False):
 
 
 def quadragramfitness(text, spacesincluded = False):
-    text = formatcorpus(text)
-    
-    eletters = string.ascii_uppercase
+    eletters = np.array(list(string.ascii_uppercase))
            
     if not spacesincluded:
         # If you don't want spaces
         text = text.replace(' ','')
     else:
         eletters += ' '
-
     
     logtable = englishquadragrams(spacesincluded,1)
-    loglist = dict2valuelist(logtable)
+    loglist = np.array(dict2valuelist(logtable))
     sigma = 0.0
         
     for i in range(len(text)-3):
-        index = (eletters.index(text[i])*26*26*26) + (eletters.index(text[i+1])*26*26) + (eletters.index(text[i+2])*26) + (eletters.index(text[i+3]))
+        index = (np.where(eletters == text[i])*26*26*26) + (np.where(eletters == text[i+1])*26*26) + (np.where(eletters == text[i+2])*26) + (np.where(eletters == text[i+3]))
         sigma += (float(loglist[index])/(len(text)-2))
         
     return (sigma)

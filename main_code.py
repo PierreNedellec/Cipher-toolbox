@@ -181,6 +181,7 @@ def monoalphabeticdecrypt(text,key):
     
     
 def hill_climb_monoalphabetic(text):
+    text = formatcorpus(text)
     parent = list(string.ascii_uppercase)
     parent_plaintext = monoalphabeticdecrypt(text, parent)
     parent_fitness = analysis.quadragramfitness(parent_plaintext, 0)
