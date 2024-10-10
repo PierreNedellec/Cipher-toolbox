@@ -4,6 +4,7 @@
 import string
 import analysis
 import random
+import cProfile
 
 # VARIABLES
 
@@ -186,11 +187,11 @@ def hill_climb_monoalphabetic(text):
     parent_plaintext = monoalphabeticdecrypt(text, parent)
     parent_fitness = analysis.quadragramfitness(parent_plaintext, 0)
     counter = 0
-    while counter<10000:
-        if counter%1000 == 100:
-            print('working...')
-            print('counter:',counter)
-            print('current fitness:',parent_fitness)
+    while counter<20:
+       # if counter%20 == 0:
+        #    print('working...')
+         #   print('counter:',counter)
+          #  print('current fitness:',parent_fitness)
         counter+=1
         child = parent
         x = random.randint(0,25)
@@ -290,4 +291,4 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-print(hill_climb_monoalphabetic(ciphertext()))
+cProfile.run('hill_climb_monoalphabetic(ciphertext())')
