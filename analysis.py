@@ -1,12 +1,6 @@
 from math import sqrt
 import string
 
-global english_monogram_frequencies_inner_product
-english_monogram_frequencies_inner_product = 1477094937415
-
-global brown_corpus
-brown_corpus = open('brown_corpus_words.txt','r').read()
-
 
 def formatcorpus(text):
     text = text.upper()
@@ -136,14 +130,11 @@ def cosineangle_vectors(a,b):
     
     return abinner/denominator
 
-global english_monogram_frequencies
-english_monogram_frequencies = monogramfreq(brown_corpus,0)
 
 def monogramfitness(text,s):
+    brown_corpus = open('brown_corpus_words.txt','r').read()
     ft = dict2valuelist(monogramfreq(text,s))
-    fb = dict2valuelist(english_monogram_frequencies)
-    if s:
-        fb = dict2valuelist(monogramfreq(brown_corpus,s))
+    fb = dict2valuelist(monogramfreq(brown_corpus,s))
     return (cosineangle_vectors(ft,fb))
 
 
