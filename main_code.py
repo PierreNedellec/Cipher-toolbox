@@ -18,7 +18,7 @@ english_letters = list(string.ascii_uppercase)
 # FUNCTIONS
 
 def ciphertext():
-    return open('brown_corpus_words.txt','r', encoding='utf8').read()
+    return open('cipher.txt','r', encoding='utf8').read()
 
 
 def formatcorpus(text):
@@ -236,13 +236,16 @@ def GUI_analysis():
     spacesincluded = input('''Include spaces?
     (0) No
     (1) Yes''')
-    spacesincluded = bool(spacesincluded)
-    cipher = ciphertext().replace(' ','')
-    mf = analysis.monogramfitness(cipher,spacesincluded)
-    qf = analysis.quadragramfitness(cipher,spacesincluded)
-    ioc = analysis.ioc(cipher,spacesincluded)
+    if spacesincluded == 1:
+        spacesincluded = True
+    if spacesincluded == 0:
+        spacesincluded = False 
+    print(spacesincluded)
+    mf = analysis.monogramfitness(brown_corpus,spacesincluded)
+    qf = analysis.quadragramfitness(brown_corpus,spacesincluded)
+    ioc = analysis.ioc(brown_corpus,spacesincluded)
     mf = round(mf,3)
-    qf = round(qf,4)
+    qf = round(qf,2)
     ioc = round(ioc,3)
     print('''Performing analysis...
     Monogram fitness:''',str(mf),'Eng: 0.996, Rand: 0.76' + '''
