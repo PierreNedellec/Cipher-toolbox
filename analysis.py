@@ -128,8 +128,7 @@ def innerproduct_vectors(alpha,beta):
 
 def cosineangle_vectors(a,b):
     # This calcualtes the angle between two vectors
-
-    binner = innerproduct_vectors(a, b)
+    binner = innerproduct_vectors(b, b)
     abinner = innerproduct_vectors(a, b)
     ainner = innerproduct_vectors(a, a)
     

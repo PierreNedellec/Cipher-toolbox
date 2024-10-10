@@ -241,9 +241,9 @@ def GUI_analysis():
         s = True
     if s == '0':
         s = False 
-    mf = analysis.monogramfitness(brown_corpus,s)
-    qf = analysis.quadragramfitness(brown_corpus,s)
-    ioc = analysis.ioc(brown_corpus,s)
+    mf = analysis.monogramfitness(ciphertext(),s)
+    qf = analysis.quadragramfitness(ciphertext(),s)
+    ioc = analysis.ioc(ciphertext(),s)
     mf = round(mf,3)
     qf = round(qf,2)
     ioc = round(ioc,3)
