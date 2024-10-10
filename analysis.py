@@ -175,7 +175,7 @@ def quadragramfitness(text, spacesincluded = False):
     sigma = 0.0
         
     for i in range(len(text)-3):
-        index = (np.where(eletters == text[i])*26*26*26) + (np.where(eletters == text[i+1])*26*26) + (np.where(eletters == text[i+2])*26) + (np.where(eletters == text[i+3]))
+        index = ((np.where(eletters == text[i]))[0]*26*26*26) + ((np.where(eletters == text[i+1]))[0]*26*26) + ((np.where(eletters == text[i+2]))[0]*26) + ((np.where(eletters == text[i+3]))[0])
         sigma += (float(loglist[index])/(len(text)-2))
         
     return (sigma)
