@@ -36,7 +36,7 @@ def quadragrams():
     for k,v in quadragrams.items():
         quadragrams[k] = v/(len(text)-3)
             
-    g = open('english_quadragrams_frequencies_spaces.txt','w')
+    g = open('english_quadragram_frequencies_spaces.txt','w')
     new = ''
     for k,v in quadragrams.items():
         new += (k+';'+str(v)+'\n')
@@ -45,9 +45,9 @@ def quadragrams():
     
 def englishquadragrams(spaces = False):
     if spaces:
-        doc = open('english_quadragrams_frequencies_spaces.txt','r')
+        doc = open('english_quadragram_frequencies_spaces.txt','r')
     else:
-        doc = open('english_quadragrams_frequencies.txt','r')
+        doc = open('english_quadragram_frequencies.txt','r')
     quaddict = {}
     
     for item in doc.readlines():
@@ -58,18 +58,18 @@ def englishquadragrams(spaces = False):
 
 
 def addlogs():
-    original = englishquadragrams(0)
+    original = englishquadragrams(1)
     new = ''
     
     for k,v in original.items():
         v = float(v)
         if v ==0:
-            v = -17
+            v = -20
         else:
             v = log(v)
         new += (k+';'+str(v)+'\n')  
         
-    g = open('english_quadragram_frequencies_logvalues.txt','w')
+    g = open('english_quadragram_frequencies_spaces_logvalues.txt','w')
     g.write(new)
     
 addlogs()

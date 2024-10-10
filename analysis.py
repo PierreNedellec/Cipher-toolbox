@@ -58,7 +58,7 @@ def dict2keylist(mydict):
 
 
 def wordfreq(text):
-    words = dict()
+    words = {}
     if type(text) == str:
         text = formatcorpus(text)
         text = text.split(' ')
@@ -99,7 +99,7 @@ def trigramfreq(text,lettersonly=False):
         text = text.replace(' ','')
         text = text.replace('\n','')
     
-    trigrams = dict()
+    trigrams = {}
     
     for pos in range(len(text)-2):
         if text[pos:pos+3] in trigrams:
@@ -116,7 +116,7 @@ def innerproduct_vectors(alpha,beta):
         print('ERROR: vector lengths do not match')
         print('Vector a:',alpha,len(alpha))
         print('Vector b:',beta,len(beta))
-        return
+        return 'error'
     
     length = len(alpha)
     total = 0
@@ -126,10 +126,10 @@ def innerproduct_vectors(alpha,beta):
         total += product
     return total
 
-def cosineangle_vectors(a,b,c = english_monogram_frequencies_inner_product):
+def cosineangle_vectors(a,b):
     # This calcualtes the angle between two vectors
 
-    binner = c
+    binner = innerproduct_vectors(a, b)
     abinner = innerproduct_vectors(a, b)
     ainner = innerproduct_vectors(a, a)
     
@@ -184,16 +184,13 @@ def quadragramfitness(text, spacesincluded = False):
     
     logtable = englishquadragrams(spacesincluded,1)
     loglist = dict2valuelist(logtable)
-    sum = 0.0
+    sigma = 0.0
         
     for i in range(len(text)-3):
-        index = eletters.index(text[i])*26*26*26 
-        + eletters.index(text[i+1])*26*26
-        + eletters.index(text[i+2])*26
-        + eletters.index(text[i+3])
-        sum += float(loglist[index])
+        index = (eletters.index(text[i])*26*26*26) + (eletters.index(text[i+1])*26*26) + (eletters.index(text[i+2])*26) + (eletters.index(text[i+3]))
+        sigma += float(loglist[index])
         
-    return (sum/(len(text)-2))
+    return (sigma/(len(text)-2))
 
 # Index of coincidence
 
@@ -206,12 +203,12 @@ def ioc(text, spacesincluded = False):
         
     df = monogramfreq(text,spacesincluded)
     l = 0
-    sum = 0
+    sigma = 0
     
     for k,v in df.items():
         l += v
-        sum += v*(v-1)
-    sum /= (l*(l-1))
+        sigma += v*(v-1)
+    sigma /= (l*(l-1))
     
-    return fac * sum
+    return fac * sigma
 

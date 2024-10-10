@@ -89,7 +89,8 @@ def brutecaesardecrypt(text):
     key = 'not found'
     decrypt = 'not found'
     for k in range(26):
-        if analysis.monogramfitness(text) > 0.9:
+        print(k)
+        if analysis.monogramfitness(text,0) > 0.9:
             decrypt = text
             key = k
         text = caesardecrypt(text,1)
@@ -240,13 +241,12 @@ def GUI_analysis():
     mf = analysis.monogramfitness(cipher,spacesincluded)
     qf = analysis.quadragramfitness(cipher,spacesincluded)
     ioc = analysis.ioc(cipher,spacesincluded)
-    print(ioc)
     mf = round(mf,3)
     qf = round(qf,4)
     ioc = round(ioc,3)
     print('''Performing analysis...
     Monogram fitness:''',str(mf),'Eng: 0.996, Rand: 0.76' + '''
-    Quadragram fitness:''',str(qf),'Eng: -16.49, Rand: -16.72'+'''
+    Quadragram fitness:''',str(qf),'Eng: -9.6, Rand: -18.3'+'''
     Index of coincidence:''',str(ioc),'''Eng: 1.7, Rand: 1.0
     (Reference values assume spaces are excluded)''')
     
