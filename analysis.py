@@ -188,9 +188,9 @@ def quadragramfitness(text, spacesincluded = False):
         
     for i in range(len(text)-3):
         index = (eletters.index(text[i])*26*26*26) + (eletters.index(text[i+1])*26*26) + (eletters.index(text[i+2])*26) + (eletters.index(text[i+3]))
-        sigma += float(loglist[index])
+        sigma += (float(loglist[index])/(len(text)-2))
         
-    return (sigma/(len(text)-2))
+    return (sigma)
 
 # Index of coincidence
 

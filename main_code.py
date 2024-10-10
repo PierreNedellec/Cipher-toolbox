@@ -233,17 +233,17 @@ def GUI_encrypt():
     
     
 def GUI_analysis():
-    spacesincluded = input('''Include spaces?
+    # variable s is 1/True to include spaces, 0/False to exclude them
+    s = input('''Include spaces?
     (0) No
     (1) Yes''')
-    if spacesincluded == 1:
-        spacesincluded = True
-    if spacesincluded == 0:
-        spacesincluded = False 
-    print(spacesincluded)
-    mf = analysis.monogramfitness(brown_corpus,spacesincluded)
-    qf = analysis.quadragramfitness(brown_corpus,spacesincluded)
-    ioc = analysis.ioc(brown_corpus,spacesincluded)
+    if s == '1':
+        s = True
+    if s == '0':
+        s = False 
+    mf = analysis.monogramfitness(brown_corpus,s)
+    qf = analysis.quadragramfitness(brown_corpus,s)
+    ioc = analysis.ioc(brown_corpus,s)
     mf = round(mf,3)
     qf = round(qf,2)
     ioc = round(ioc,3)
