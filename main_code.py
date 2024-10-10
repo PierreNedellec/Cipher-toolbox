@@ -3,6 +3,7 @@
 
 import string
 import analysis
+import random
 
 # VARIABLES
 
@@ -65,8 +66,6 @@ def dict2keylist(mydict):
     for keys, values in mydict.items():
         out.append(keys)
     return out
-
-
 
 
 
@@ -178,9 +177,35 @@ def monoalphabeticdecrypt(text,key):
             continue
         new_character = english_letters[key.index(character)]
         new_text += new_character
-    print(new_text)
+    return new_text
     
-
+    
+def hill_climb_monoalphabetic(text):
+    parent = list(string.ascii_uppercase)
+    parent_plaintext = monoalphabeticdecrypt(text, parent)
+    print(parent_plaintext)
+    parent_fitness = analysis.monogramfitness(parent_plaintext, 0)
+    counter = 0
+    while counter<1000:
+        counter+=1
+        child = parent
+        x = random.randint(0,25)
+        y = random.randint(0,25)
+        # Swap letters
+        temp = child[x]
+        child[x] = child[y]
+        child[y] = temp
+        # Calculate new fitness
+        child_plaintext = monoalphabeticdecrypt(text, child)
+        child_fitness = analysis.monogramfitness(child_plaintext, 0)
+        # Compare parent and child keys
+        if child_fitness > parent_fitness:
+            parent = child
+            parent_plaintext = child_plaintext
+            parent_fitness = child_fitness
+            counter = 0
+    return parent_plaintext, parent
+        
 #GUIs
 
 
@@ -259,4 +284,4 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-GUI()
+print(hill_climb_monoalphabetic(ciphertext()))
