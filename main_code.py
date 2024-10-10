@@ -89,7 +89,7 @@ def brutecaesardecrypt(text):
     key = 'not found'
     decrypt = 'not found'
     for k in range(26):
-        if analysis.monogramfitness(text,0) > 0.9:
+        if analysis.quadragramfitness(text,0) > -10:
             decrypt = text
             key = k
         text = caesardecrypt(text,1)
