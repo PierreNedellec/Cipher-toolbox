@@ -67,7 +67,7 @@ def addlogs():
             v = -20
         else:
             v = log(v)
-        new += (k+';'+str(v)+'\n')  
+        new += (str(v)+'\n')  
         
     g = open('english_quadragram_frequencies_spaces_logvalues.txt','w')
     g.write(new)

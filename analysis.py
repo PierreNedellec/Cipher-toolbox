@@ -146,31 +146,30 @@ def englishquadragrams(spacesincluded = False, log = False):
             doc = open('english_quadragram_frequencies_logvalues.txt','r')
         else:  
             doc = open('english_quadragram_frequencies.txt','r')
-    quaddict = {}
     
-    for item in doc.readlines():
-        item = item.replace('\n','')
-        item = item.split(';')
-        quaddict[item[0]] = item[1]
-    return quaddict
+    f = doc.read()
+    f = f.split('\n')
+    for a in range(len(f)-1):
+        n = f[a]
+        n = float(n)
+        f[a] = n
+    return f
 
-
-def quadragramfitness(text, spacesincluded = False):
-    eletters = np.array(list(string.ascii_uppercase))
+def quadragramfitness(text,equadragrams,spacesincluded = False):
+    eletters = list(string.ascii_uppercase)
            
     if not spacesincluded:
         # If you don't want spaces
         text = text.replace(' ','')
     else:
         eletters += ' '
-    
-    logtable = englishquadragrams(spacesincluded,1)
-    loglist = np.array(dict2valuelist(logtable))
+
+    loglist = equadragrams
     sigma = 0.0
         
     for i in range(len(text)-3):
-        index = ((np.where(eletters == text[i]))[0]*26*26*26) + ((np.where(eletters == text[i+1]))[0]*26*26) + ((np.where(eletters == text[i+2]))[0]*26) + ((np.where(eletters == text[i+3]))[0])
-        sigma += (float(loglist[index])/(len(text)-2))
+        index = (eletters.index(text[i])*26*26*26) + (eletters.index(text[i+1])*26*26) + (eletters.index(text[i+2])*26) + (eletters.index(text[i+3]))
+        sigma += (loglist[index]/(len(text)-2))
         
     return (sigma)
 
@@ -194,3 +193,9 @@ def ioc(text, spacesincluded = False):
     
     return fac * sigma
 
+#g = open('english_quadragram_frequencies_logvalues.txt','w')
+#f = open('english_quadragram_frequencies_logvalues.txt','r').read()
+#for a in string.ascii_uppercase:
+#    f.replace(a,'')
+#f.replace(';','')
+#g.write(f)

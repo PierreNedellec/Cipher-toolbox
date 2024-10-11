@@ -176,13 +176,14 @@ def monoalphabeticdecrypt(text,key):
     
     
 def hill_climb_monoalphabetic(text):
+    quads = analysis.englishquadragrams(0,1)
     text = formatcorpus(text)
     text = text.replace(' ','')
     parent = list(string.ascii_uppercase)
     parent_plaintext = monoalphabeticdecrypt(text, parent)
-    parent_fitness = analysis.monogramfitness(parent_plaintext, 0)
+    parent_fitness = analysis.quadragramfitness(parent_plaintext,quads, 0)
     counter = 0
-    while counter<15000:
+    while counter<5000:
        # if counter%20 == 0:
         #    print('working...')
          #   print('counter:',counter)
@@ -199,7 +200,7 @@ def hill_climb_monoalphabetic(text):
         child[y] = temp
         # Calculate new fitness
         child_plaintext = monoalphabeticdecrypt(text, child)
-        child_fitness = analysis.monogramfitness(child_plaintext, 0)
+        child_fitness = analysis.quadragramfitness(child_plaintext,quads, 0)
         # Compare parent and child keys
         if child_fitness > parent_fitness:
             counter = 0
