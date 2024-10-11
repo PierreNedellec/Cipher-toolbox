@@ -5,25 +5,18 @@ import numpy as np
 
 def formatcorpus(text):
     text = text.upper()
-    eletters = string.ascii_uppercase + ' '
+    eletters = list(string.ascii_uppercase + ' ')
     
-    for a in range(3):
-        for j in range(len(text)):
-            s = 0
-            try:
-                if not text[j-s] in eletters:
-                    try:
-                        text = text.replace(text[j],'')
-                        s += 2
-                    except:
-                        continue
-            except:
-                continue
-        # This checks if a character is in the alphabet, if it isnt, it deletes it. The try statements is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
-    while '  ' in text:
-        text = text.replace('  ',' ')
-               
-    return text
+    new = ''
+    for j in text:
+        if j in eletters:
+            new += j
+    
+    while '  ' in new:
+        new = new.replace('  ',' ')
+    # This checks if a character is in the alphabet, if it isnt, it deletes it. The try statements is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
+            
+    return new
 
 # Dictionary maniupulation
 
@@ -68,19 +61,17 @@ def wordfreq(text):
 
 
 def monogramfreq(text,spacesincluded=False):
-    text = text.upper()
-    eletters = string.ascii_uppercase + ' '
 
-    if not spacesincluded:
-        eletters = string.ascii_uppercase
+    if spacesincluded:
+        eletters = list(string.ascii_uppercase+' ')
+    else:
+        eletters = list(string.ascii_uppercase)
+        text = text.replace(' ','')
         
-    letters = {}
-    for i in eletters:
-        letters[i] = 0
+    letters = [0] * len(eletters)
         
     for letter in text:
-        if letter in eletters:
-            letters[letter] += 1
+        letters[eletters.index(letter)] += 1
             
     # Makes a dictionary with all the letters with their frequencies
     return letters
@@ -133,9 +124,12 @@ def cosineangle_vectors(a,b):
 
 
 def monogramfitness(text,s):
-    brown_corpus = open('brown_corpus_words.txt','r').read()
-    ft = dict2valuelist(monogramfreq(text,s))
-    fb = dict2valuelist(monogramfreq(brown_corpus,s))
+    # fb is the frequency of the brown corpus, s with spaces, else without
+    if s:
+        fb = [381728, 72822, 147237, 188251, 592982, 110706, 92531, 258019, 345777, 7640, 31188, 196168, 120667, 336729, 360310, 95951, 5103, 290953, 310710, 438979, 128805, 47272, 89151, 9439, 81735, 4516, 1002175]
+    else:
+        fb = [381728, 72822, 147237, 188251, 592982, 110706, 92531, 258019, 345777, 7640, 31188, 196168, 120667, 336729, 360310, 95951, 5103, 290953, 310710, 438979, 128805, 47272, 89151, 9439, 81735, 4516]
+    ft = monogramfreq(text,s)
     return (cosineangle_vectors(ft,fb))
 
 

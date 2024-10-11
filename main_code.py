@@ -25,24 +25,18 @@ def ciphertext():
 
 def formatcorpus(text):
     text = text.upper()
-    eletters = string.ascii_uppercase + ' '
+    eletters = list(string.ascii_uppercase + ' ')
     
-    for j in range(len(text)):
-        try:
-            if not text[j] in eletters:
-                try:
-                    text = text.replace(text[j],'')
-                except:
-                    continue
-        except:
-            continue
+    new = ''
+    for j in text:
+        if j in eletters:
+            new += j
     
-    while '  ' in text:
-        text = text.replace('  ',' ')
+    while '  ' in new:
+        new = new.replace('  ',' ')
     # This checks if a character is in the alphabet, if it isnt, it deletes it. The try statements is because replacement results in an IndexError at the end (because the text is shorter that what it started as.)
             
-    
-    return text
+    return new
 
 
 def sortdict(mydict):
@@ -183,11 +177,12 @@ def monoalphabeticdecrypt(text,key):
     
 def hill_climb_monoalphabetic(text):
     text = formatcorpus(text)
+    text = text.replace(' ','')
     parent = list(string.ascii_uppercase)
     parent_plaintext = monoalphabeticdecrypt(text, parent)
-    parent_fitness = analysis.quadragramfitness(parent_plaintext, 0)
+    parent_fitness = analysis.monogramfitness(parent_plaintext, 0)
     counter = 0
-    while counter<20:
+    while counter<15000:
        # if counter%20 == 0:
         #    print('working...')
          #   print('counter:',counter)
@@ -204,13 +199,13 @@ def hill_climb_monoalphabetic(text):
         child[y] = temp
         # Calculate new fitness
         child_plaintext = monoalphabeticdecrypt(text, child)
-        child_fitness = analysis.quadragramfitness(child_plaintext, 0)
+        child_fitness = analysis.monogramfitness(child_plaintext, 0)
         # Compare parent and child keys
         if child_fitness > parent_fitness:
+            counter = 0
             parent = child
             parent_plaintext = child_plaintext
             parent_fitness = child_fitness
-            counter = 0
     return parent_plaintext, parent, parent_fitness
         
 #GUIs
@@ -291,4 +286,6 @@ def monoalphabetickeyword_help():
 
 # CODE
 
-cProfile.run('hill_climb_monoalphabetic(ciphertext())')
+cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
+
+
