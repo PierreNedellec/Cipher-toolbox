@@ -5,6 +5,7 @@ import string
 import analysis
 import random
 import cProfile
+import math
 
 # VARIABLES
 
@@ -80,13 +81,16 @@ def caesardecrypt(text,key):
 
 
 def brutecaesardecrypt(text):
+    raw_text = formatcorpus(text)
+    raw_text = raw_text.replace(' ','')
     key = 'not found'
     decrypt = 'not found'
     for k in range(26):
-        if analysis.quadragramfitness(text,0) > -10:
-            decrypt = text
+        fitness = analysis.monogramfitness(raw_text,0)
+        if fitness > 0.55:
+            decrypt = caesardecrypt(text, k).replace(' ','')
             key = k
-        text = caesardecrypt(text,1)
+        raw_text = caesardecrypt(raw_text,1)
         # Rotates the shift by 1 every time
     return  key,decrypt
 
@@ -138,7 +142,27 @@ def autoaffinedecrypt(text):
     
     return key, decrypt
     
-
+def bruteaffinedecrypt(raw_text):
+    text = formatcorpus(raw_text)
+    key = 'not found'
+    decrypt = 'not found'
+    A = [1,3,5,7,9,11,15,17,19,21,23,25]
+    B = [x for x in range(26)]
+    maxf = 0
+    
+    for a in A:
+        for b in B:
+            canddecrypt = affinedecrypt(text, a, b)
+            candfitness = analysis.monogramfitness(canddecrypt, False)
+            if candfitness > maxf:
+                maxf = candfitness
+                maxa = a
+                maxb = b
+                
+    decrypt = affinedecrypt(raw_text, maxa, maxb)
+    key = [maxa,maxb]
+    
+    return key, decrypt
 
 def charreplace(text,characters):
  
@@ -181,14 +205,17 @@ def hill_climb_monoalphabetic(text):
     text = text.replace(' ','')
     parent = list(string.ascii_uppercase)
     parent_plaintext = monoalphabeticdecrypt(text, parent)
-    parent_fitness = analysis.quadragramfitness(parent_plaintext,quads, 0)
+    parent_fitness = analysis.quadragramfitness(parent_plaintext,quads, 0, False)
     counter = 0
-    while counter<5000:
+    temperature = 100
+    accepted_candidates = 0
+    while parent_fitness<-10:
        # if counter%20 == 0:
         #    print('working...')
          #   print('counter:',counter)
           #  print('current fitness:',parent_fitness)
         counter+=1
+        temperature = temperature - 0.1
         child = parent
         x = random.randint(0,25)
         y = random.randint(0,25)
@@ -200,13 +227,28 @@ def hill_climb_monoalphabetic(text):
         child[y] = temp
         # Calculate new fitness
         child_plaintext = monoalphabeticdecrypt(text, child)
-        child_fitness = analysis.quadragramfitness(child_plaintext,quads, 0)
+        child_fitness = analysis.quadragramfitness(child_plaintext,quads, 0, False)
         # Compare parent and child keys
-        if child_fitness > parent_fitness:
-            counter = 0
+        energy = child_fitness - parent_fitness
+        if energy >= 0:
+            accepted_candidates += 1
             parent = child
             parent_plaintext = child_plaintext
             parent_fitness = child_fitness
+        else: # Simulated annealing
+            exp = energy/temperature
+            try:
+                
+                prob = math.e**exp
+            except:
+                continue
+            if prob > random.random():
+                accepted_candidates += 1
+                print(parent_fitness, temperature, prob, exp)
+                parent = child
+                parent_plaintext = child_plaintext
+                parent_fitness = child_fitness
+                
     return parent_plaintext, parent, parent_fitness
         
 #GUIs
@@ -235,8 +277,9 @@ def GUI_decrypt():
 Select an option:
     (1) Caesar decrypt
     (2) Affine decrypt
-    (3) Keyword cipher help
-    (4) Back to main menu
+    (3) Monoalphabetic substitution decryption
+    (4) Monoalphabetic substitution help
+    (5) Back to main menu
     ''')
                    
     if option == '1':
@@ -244,12 +287,16 @@ Select an option:
         print(solved[1])
         print('key:',solved[0])
     elif option == '2':
-        solved = autoaffinedecrypt(ciphertext())
+        solved = bruteaffinedecrypt(ciphertext())
         print(solved[1])
         print('key:',solved[0])
     elif option == '3':
         monoalphabetickeyword_help()
     elif option == '4':
+        print('''Input key:
+ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
+        print(monoalphabeticdecrypt(ciphertext(),input()))
+    elif option == '5':
         GUI()
     else:
         GUI_decrypt()
@@ -282,11 +329,23 @@ def GUI_analysis():
     
 
 def monoalphabetickeyword_help():
-    print('Feature coming soon')
-    GUI()
+    key = list(input('''Enter key. Use - for unknowns. 
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+'''))
+    englishkey = []
+    cipherkey = []
+    eletters = list(string.ascii_uppercase)
+    for l in key:
+        if l in eletters:
+            cipherkey.append(l)
+            englishkey.append(eletters[key.index(l)])
+    print(cipherkey,englishkey)
+    charreplace(ciphertext(),[cipherkey,englishkey])
+    monoalphabetickeyword_help()
 
 # CODE
 
-cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
+#cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
+GUI()
 
 

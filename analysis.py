@@ -155,7 +155,7 @@ def englishquadragrams(spacesincluded = False, log = False):
         f[a] = n
     return f
 
-def quadragramfitness(text,equadragrams,spacesincluded = False):
+def quadragramfitness(text,equadragrams,spacesincluded = False, scale = True):
     eletters = list(string.ascii_uppercase)
            
     if not spacesincluded:
@@ -169,8 +169,9 @@ def quadragramfitness(text,equadragrams,spacesincluded = False):
         
     for i in range(len(text)-3):
         index = (eletters.index(text[i])*26*26*26) + (eletters.index(text[i+1])*26*26) + (eletters.index(text[i+2])*26) + (eletters.index(text[i+3]))
-        sigma += (loglist[index]/(len(text)-2))
-        
+        sigma += (loglist[index])
+    if scale:
+        return (sigma)/(len(text)-2)
     return (sigma)
 
 # Index of coincidence
