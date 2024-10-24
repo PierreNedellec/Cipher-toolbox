@@ -74,6 +74,13 @@ def THEclue(raw_text):
     
     return '....'+e+'..............'+t+'......'
 
+def perminverse(perm):
+    newperm = [-1]*len(perm)
+    for l in range(len(perm)):
+        newperm[perm[l]] = l
+        
+    return newperm
+
 def caesardecrypt(text,key):
     text = text.upper()
     
