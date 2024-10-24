@@ -63,7 +63,16 @@ def dict2keylist(mydict):
         out.append(keys)
     return out
 
-
+def THEclue(raw_text):
+    text = formatcorpus(raw_text)
+    letterfreq = analysis.monogramfreq(text)
+    pos = letterfreq.index(max(letterfreq))
+    e = english_letters[pos]
+    letterfreq[pos] = 0
+    pos = letterfreq.index(max(letterfreq))
+    t = english_letters[pos]
+    
+    return '....'+e+'..............'+t+'......'
 
 def caesardecrypt(text,key):
     text = text.upper()
@@ -291,11 +300,11 @@ Select an option:
         print(solved[1])
         print('key:',solved[0])
     elif option == '3':
-        monoalphabetickeyword_help()
-    elif option == '4':
         print('''Input key:
 ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
         print(monoalphabeticdecrypt(ciphertext(),input()))
+    elif option == '4':
+        monoalphabetickeyword_help()
     elif option == '5':
         GUI()
     else:
@@ -335,11 +344,13 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
     englishkey = []
     cipherkey = []
     eletters = list(string.ascii_uppercase)
+    if len(key) != 26:
+        key = THEclue(ciphertext())
+        print(key)
     for l in key:
         if l in eletters:
             cipherkey.append(l)
             englishkey.append(eletters[key.index(l)])
-    print(cipherkey,englishkey)
     charreplace(ciphertext(),[cipherkey,englishkey])
     monoalphabetickeyword_help()
 

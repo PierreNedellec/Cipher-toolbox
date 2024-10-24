@@ -73,7 +73,7 @@ def monogramfreq(text,spacesincluded=False):
     for letter in text:
         letters[eletters.index(letter)] += 1
             
-    # Makes a dictionary with all the letters with their frequencies
+    # Makes a list of letters' frequencies
     return letters
 
 
