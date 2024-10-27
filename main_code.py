@@ -72,6 +72,17 @@ def perminverse(perm):
         
     return newperm
 
+def pad_text(raw_text,block_size):
+    text = formatcorpus(raw_text)
+    text = text.replace(' ','')
+    length = len(text)
+    add = length%block_size
+    if add > 0:
+        add = block_size - add
+    
+    return (raw_text + ('X'*add))
+    
+
 def permutationencrypt(text,key):
     # Text format
     text = formatcorpus(text)
@@ -90,6 +101,7 @@ def permutationdecrypt(text,key):
     return permutationencrypt(text,perminverse(key))
 
 def autopermutationencrypt(text,period):
+    text = pad_text(text, period)
     quads = analysis.englishquadragrams(0,1)
 
     perms = list(permutations(range(period)))
@@ -103,7 +115,17 @@ def autopermutationencrypt(text,period):
             maxf = fitness
             maxdecrypt = decrypt
             maxkey = perm
-    return maxkey, maxdecrypt
+    return maxkey, maxdecrypt, maxf
+
+def brute_permutation_decrypt(text, try_up_to = 8):
+    for period in range(1,8):
+        print('Trying period length:',period)
+        k, p, f = autopermutationencrypt(text, period)
+        if f > -11:
+            print('Plaintext: ',p)
+            print('\nFitness: ',f)
+            print('\nKey: ',k)
+        
 
 def caesardecrypt(text,key):
     text = text.upper()
@@ -202,7 +224,7 @@ def bruteaffinedecrypt(raw_text):
     decrypt = affinedecrypt(raw_text, maxa, maxb)
     key = [maxa,maxb]
     
-    return key, decrypt
+    return key, decrypt, maxf
 
 def charreplace(text,characters):
  
@@ -263,9 +285,11 @@ def monoalphabetic_decrypt(text, key):
 def hill_climb(ciphertext, max_iterations=10000):
     key = create_initial_key(ciphertext)
     best_score = score_text(monoalphabetic_decrypt(ciphertext, key))
+    tenpercent = max_iterations//10
     
     for _ in range(max_iterations):
-        print(_)
+        if _ % tenpercent == 0:
+            print(str(_//(tenpercent//10))+'% complete')
         # Randomly swap two letters in the key
         new_key = key.copy()
         a, b = random.sample(list(new_key.keys()), 2)
@@ -278,14 +302,12 @@ def hill_climb(ciphertext, max_iterations=10000):
         if new_score > best_score:
             key = new_key
             best_score = new_score
-    
+    print('100% complete')
     return key
 
 def auto_monoalphabetic_decrypt(text):
 
     fciphertext = analysis.formatcorpus(text)    
-
-    print(f"Ciphertext: {ciphertext}")
     
     best_key = hill_climb(fciphertext)
     best_key = sortdict(best_key,1,False)
@@ -321,38 +343,23 @@ Select an option:
     (1) Caesar decrypt
     (2) Affine decrypt
     (3) Monoalphabetic substitution decryption
-    (4) Monoalphabetic substitution help
-    (5) Permutation decrypt
-    (6) Automatic monoalphabetic decryption
+    (4) Permutation decryption
     (0) Back to main menu
     ''')
                    
     if option == '1':
         solved = brutecaesardecrypt(ciphertext())
-        print(solved[1])
-        print('key:',solved[0])
+        print('Plaintext:',solved[1])
+        print('\nKey:',solved[0])
     elif option == '2':
         solved = bruteaffinedecrypt(ciphertext())
-        print(solved[1])
-        print('key:',solved[0])
+        print('Plaintext:',solved[1])
+        print('\nKey:',solved[0])
+        print('\nFitness:',solved[2])
     elif option == '3':
-        print('''Input key:
-ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
-        print(monoalphabeticdecrypt(ciphertext(),input()))
+        GUI_monoalphabetic_decryption()
     elif option == '4':
-        monoalphabetickeyword_help()
-    elif option == '5':
-        p = input('''
-Enter the period:
-    ''')    
-        solved = autopermutationencrypt(ciphertext(), int(p))
-        print(solved[1])
-        print('key:',solved[0])
-    elif option == '6':
-        plaintext, best_key, best_fitness = auto_monoalphabetic_decrypt(ciphertext())
-        print(f"\nDecrypted text: {plaintext}")
-        print(f"\nFitness: {best_fitness}")
-        print(f"\nKey: {''.join(best_key.keys())}")
+        GUI_permutation_decryption()
     elif option == '0':
         GUI()
     else:
@@ -374,7 +381,65 @@ Enter key each item separated by a comma:
         GUI()
     else:
         GUI_decrypt()
-    
+
+def GUI_monoalphabetic_decryption():
+    option = input('''
+Select an option:
+    (1) Help for hand decryption
+    (2) Automatic decryption
+    (3) Decryption (known key)
+    (0) Back to main menu
+    ''')
+                   
+    if option == '1':
+        monoalphabetickeyword_help()
+
+    elif option == '2':
+        plaintext, best_key, best_fitness = auto_monoalphabetic_decrypt(ciphertext())
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        print(f"\nKey: {''.join(best_key.keys())}")
+        
+    elif option == '3':
+        print('''Input key:
+ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
+        print(monoalphabetic_decrypt(ciphertext(),input()))
+        
+    elif option == '0':
+        GUI()
+    else:
+        GUI_monoalphabetic_decryption()
+        
+def GUI_permutation_decryption():
+    option = input('''
+Select an option:
+    (1) Automatic decryption
+    (2) Decryption (known period)
+    (3) Decryption (known key)
+    (0) Back to main menu
+    ''')
+                   
+    if option == '1':
+        brute_permutation_decrypt(ciphertext())
+
+    elif option == '2':
+        p = input('''
+Enter the period:
+    ''')    
+        solved = autopermutationencrypt(ciphertext(), int(p))
+        print(solved[1])
+        print('key:',solved[0])
+        
+    elif option == '3':
+        keyinput = input('''
+Enter key each item separated by a comma:
+    ''')
+        print(permutationdecrypt(ciphertext(), keyinput.split(',')))
+        
+    elif option == '0':
+        GUI()
+    else:
+        GUI_permutation_decryption()
     
 def GUI_analysis():
     # variable s is 1/True to include spaces, 0/False to exclude them
