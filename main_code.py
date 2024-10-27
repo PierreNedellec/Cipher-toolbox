@@ -6,6 +6,8 @@ import analysis
 import random
 import cProfile
 import math
+from itertools import permutations
+import time
 
 # VARIABLES
 
@@ -40,17 +42,6 @@ def formatcorpus(text):
     return new
 
 
-def sortdict(mydict):
-    # Will sort dictionaries according to their value, not their key
-    
-    sorteddict = sorted(mydict.items(),key= lambda item: item[1])
-    sorteddict = dict(sorteddict[::-1])
-    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
-            
-    return sorteddict
-
-
-
 def dict2valuelist(mydict):
     out = []
     for keys, values in mydict.items():
@@ -80,6 +71,39 @@ def perminverse(perm):
         newperm[perm[l]] = l
         
     return newperm
+
+def permutationencrypt(text,key):
+    # Text format
+    text = formatcorpus(text)
+    text = text.replace(' ','')
+    # Variables
+    period = len(key)
+    new_text = ''
+    for cellnumber in range(0,len(text),period):
+        new_cell = [''] * period
+        for position in range(period):
+            new_cell[int(key[position])] = text[cellnumber+position]
+        new_text += ''.join(new_cell) + ' '
+    return new_text
+
+def permutationdecrypt(text,key):
+    return permutationencrypt(text,perminverse(key))
+
+def autopermutationencrypt(text,period):
+    quads = analysis.englishquadragrams(0,1)
+
+    perms = list(permutations(range(period)))
+    maxf = -20
+    maxkey = []
+    maxdecrypt = ''
+    for perm in perms:
+        decrypt = permutationdecrypt(text,perm)
+        fitness = analysis.quadragramfitness(decrypt, quads)
+        if fitness>maxf:
+            maxf = fitness
+            maxdecrypt = decrypt
+            maxkey = perm
+    return maxkey, maxdecrypt
 
 def caesardecrypt(text,key):
     text = text.upper()
@@ -203,70 +227,73 @@ def charreplace(text,characters):
         print('----------------------------------------------')
         print('')
         
-        
-def monoalphabeticdecrypt(text,key):
-    new_text = ''
-    for character in text:
-        if character not in english_letters:
-            new_text += character
-            continue
-        new_character = english_letters[key.index(character)]
-        new_text += new_character
-    return new_text
+def dictionarise_key(key):
+    k = {}
+    for a in range(25):
+        k[string.ascii_uppercase[a]] = key[a]
+    return k
     
+def sortdict(mydict,mode=1,reverse = True):
+    # mode = 0 sorts by key, mode = 1 by value
     
-def hill_climb_monoalphabetic(text):
-    quads = analysis.englishquadragrams(0,1)
-    text = formatcorpus(text)
-    text = text.replace(' ','')
-    parent = list(string.ascii_uppercase)
-    parent_plaintext = monoalphabeticdecrypt(text, parent)
-    parent_fitness = analysis.quadragramfitness(parent_plaintext,quads, 0, False)
-    counter = 0
-    temperature = 100
-    accepted_candidates = 0
-    while parent_fitness<-10:
-       # if counter%20 == 0:
-        #    print('working...')
-         #   print('counter:',counter)
-          #  print('current fitness:',parent_fitness)
-        counter+=1
-        temperature = temperature - 0.1
-        child = parent
-        x = random.randint(0,25)
-        y = random.randint(0,25)
-        if x == y:
-            continue
-        # Swap letters
-        temp = child[x]
-        child[x] = child[y]
-        child[y] = temp
-        # Calculate new fitness
-        child_plaintext = monoalphabeticdecrypt(text, child)
-        child_fitness = analysis.quadragramfitness(child_plaintext,quads, 0, False)
-        # Compare parent and child keys
-        energy = child_fitness - parent_fitness
-        if energy >= 0:
-            accepted_candidates += 1
-            parent = child
-            parent_plaintext = child_plaintext
-            parent_fitness = child_fitness
-        else: # Simulated annealing
-            exp = energy/temperature
-            try:
-                
-                prob = math.e**exp
-            except:
-                continue
-            if prob > random.random():
-                accepted_candidates += 1
-                print(parent_fitness, temperature, prob, exp)
-                parent = child
-                parent_plaintext = child_plaintext
-                parent_fitness = child_fitness
-                
-    return parent_plaintext, parent, parent_fitness
+    sorteddict = sorted(mydict.items(),key= lambda item: item[mode])
+    if reverse:
+        sorteddict = dict(sorteddict[::-1])
+    else:
+        sorteddict = dict(sorteddict)
+    
+    return sorteddict
+
+# English letter frequencies (from most common to least)
+#ENGLISH_FREQS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+def create_initial_key(ciphertext):
+    english_freqs = 'ETAOINSHRDLCUMWFGYPBVKJXQZ'
+    # Create initial key based on letter frequencies in ciphertext
+    freq_order = ''.join(sorted(set(english_freqs), key=ciphertext.count, reverse=True))
+    freq_order = freq_order.replace(' ','')
+    return {c: english_freqs[i] for i, c in enumerate(freq_order)}
+
+def score_text(text):
+    return analysis.quadragramfitness(text)
+
+def monoalphabetic_decrypt(text, key):
+    return ''.join(key.get(c, c) for c in text)
+
+def hill_climb(ciphertext, max_iterations=10000):
+    key = create_initial_key(ciphertext)
+    best_score = score_text(monoalphabetic_decrypt(ciphertext, key))
+    
+    for _ in range(max_iterations):
+        print(_)
+        # Randomly swap two letters in the key
+        new_key = key.copy()
+        a, b = random.sample(list(new_key.keys()), 2)
+        new_key[a], new_key[b] = new_key[b], new_key[a]
         
+        # Score the new key
+        new_score = score_text(monoalphabetic_decrypt(ciphertext, new_key))
+        
+        # If the new key is better, keep it
+        if new_score > best_score:
+            key = new_key
+            best_score = new_score
+    
+    return key
+
+def auto_monoalphabetic_decrypt(text):
+
+    fciphertext = analysis.formatcorpus(text)    
+
+    print(f"Ciphertext: {ciphertext}")
+    
+    best_key = hill_climb(fciphertext)
+    best_key = sortdict(best_key,1,False)
+    plaintext = monoalphabetic_decrypt(text, best_key)
+    best_fitness = analysis.quadragramfitness(analysis.formatcorpus(plaintext))
+
+    
+    return plaintext, best_key, best_fitness
 #GUIs
 
 
@@ -295,7 +322,9 @@ Select an option:
     (2) Affine decrypt
     (3) Monoalphabetic substitution decryption
     (4) Monoalphabetic substitution help
-    (5) Back to main menu
+    (5) Permutation decrypt
+    (6) Automatic monoalphabetic decryption
+    (0) Back to main menu
     ''')
                    
     if option == '1':
@@ -313,13 +342,38 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
     elif option == '4':
         monoalphabetickeyword_help()
     elif option == '5':
+        p = input('''
+Enter the period:
+    ''')    
+        solved = autopermutationencrypt(ciphertext(), int(p))
+        print(solved[1])
+        print('key:',solved[0])
+    elif option == '6':
+        plaintext, best_key, best_fitness = auto_monoalphabetic_decrypt(ciphertext())
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        print(f"\nKey: {''.join(best_key.keys())}")
+    elif option == '0':
         GUI()
     else:
         GUI_decrypt()
         
 def GUI_encrypt():
-    print('Feature coming soon.')
-    GUI()
+    option = input('''
+Select an option:
+    (1) Permutation encryption
+    (0) Back to main menu
+    ''')
+                   
+    if option == '1':
+        keyinput = input('''
+Enter key each item separated by a comma:
+    ''')
+        print(permutationencrypt(ciphertext(), keyinput.split(',')))
+    elif option == '0':
+        GUI()
+    else:
+        GUI_decrypt()
     
     
 def GUI_analysis():
