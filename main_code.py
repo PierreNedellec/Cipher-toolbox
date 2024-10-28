@@ -6,7 +6,7 @@ import analysis
 import random
 import cProfile
 import math
-from itertools import product, permutations
+from itertools import product, permutations, cycle
 import time
 
 # VARIABLES
@@ -202,11 +202,46 @@ def vigenere_decrypt(text,keyword, letters = string.ascii_uppercase):
     new_text = ''
     
     for position,letter in enumerate(text):
-        new_letter_index = (letters.index(letter) - key[position%period])%26
+        new_letter_index = (letters.index(letter) + key[position%period])%26
         new_text += letters[new_letter_index]
     
     return new_text
 
+
+def railfence_encrypt(text,n_rails,offset = 0):
+    rails = [''] * n_rails
+    seq = [a for a in range(n_rails)] + [b for b in range(n_rails-2,0,-1)]
+
+    for i,r in enumerate(cycle(seq)):
+        if i == len(text) + offset:
+            break
+        if i < offset:
+            continue
+        rails[r] += text[i - offset]
+        
+    return ''.join(rails), rails
+
+def railfence_decrypt(text,n_rails,offset = 0):
+    text = list(text)
+    template = 'X' * len(text)
+    trash, template = railfence_encrypt(template,n_rails,offset)
+    text_tranches = []
+    seq = [a for a in range(n_rails)] + [b for b in range(n_rails-2,0,-1)]
+    new_text = ''
+
+    for tranche in template:
+        text_tranches.append(text[:len(tranche)])
+        text = text[len(tranche):]
+        
+    for i,r in enumerate(cycle(seq)):
+        if i < offset:
+            continue
+        if len(text_tranches[r]) == 0:
+            break
+        new_text += text_tranches[r].pop(0)
+    
+    return new_text
+ 
 def brute_permutation_decrypt(text, try_up_to = 8):
     for period in range(1,8):
         print('Trying period length:',period)
@@ -544,13 +579,13 @@ Select an option:
     ''')
                    
     if option == '1':
-        plaintext, best_key, best_fitness = hill_climb_vigenere(ciphertext())
+        best_key, plaintext, best_fitness = hill_climb_vigenere(ciphertext())
         print(f"\nDecrypted text: {plaintext}")
         print(f"\nFitness: {best_fitness}")
         print(f"\nKey: {''.join(best_key)}")
 
     elif option == '2':
-        plaintext, best_key, best_fitness = hill_climb_beaufort(ciphertext())
+        best_key, plaintext, best_fitness = hill_climb_beaufort(ciphertext())
         print(f"\nDecrypted text: {plaintext}")
         print(f"\nFitness: {best_fitness}")
         print(f"\nKey: {''.join(best_key)}")
@@ -607,7 +642,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 # CODE
 
 #cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
-GUI()
+#GUI()
 #cProfile.run('print(hill_climb_vigenere(ciphertext()))')
-
+print(railfence_decrypt(ciphertext().replace('\n',''), 3, 2))
 
