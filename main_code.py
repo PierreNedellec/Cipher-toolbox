@@ -25,6 +25,11 @@ english_letters = list(string.ascii_uppercase)
 def ciphertext():
     return open('cipher.txt','r', encoding='utf8').read()
 
+def ciphertext_clean():
+    text = open('cipher.txt','r', encoding='utf8').read()
+    text = formatcorpus(text)
+    text = text.replace(' ','')
+    return text
 
 def formatcorpus(text):
     text = text.upper()
@@ -124,7 +129,7 @@ def vigenere_tranches(text,block_size):
     return tranches
 
 def vigenere_block_size(text,max_size = 20):
-    text = formatcorpus(text)
+    text = formatcorpus(text).replace(' ','')
     totaliocs = [0] * max_size
     
     for block in range(2,max_size):
@@ -162,7 +167,8 @@ def brute_vigenere_decrypt(text):
     
     return maxkey, maxdecrypt, maxf
     
-def hill_climb_vigenere(text, alphabet = string.ascii_uppercase):
+def hill_climb_vigenere(text):
+    alphabet = string.ascii_uppercase
     period = vigenere_block_size(text,30)
     best_key = ['A'] * period
     done = False
@@ -170,11 +176,11 @@ def hill_climb_vigenere(text, alphabet = string.ascii_uppercase):
     while not done:
         oldkey = best_key
         for i in range(period):
-            current_fitness = analysis.quadragramfitness(vigenere_decrypt(text, best_key, alphabet))
+            current_fitness = analysis.quadragramfitness(vigenere_decrypt(text, best_key))
             for l in range(26):
                 candidate_keyword = best_key.copy()
                 candidate_keyword[i] = alphabet[l]
-                candidate_fitness = analysis.quadragramfitness(vigenere_decrypt(text, candidate_keyword, alphabet))
+                candidate_fitness = analysis.quadragramfitness(vigenere_decrypt(text, candidate_keyword))
                 
                 if candidate_fitness > current_fitness:
                     best_key = candidate_keyword
@@ -183,19 +189,20 @@ def hill_climb_vigenere(text, alphabet = string.ascii_uppercase):
         if oldkey == best_key:
             done = True
             
-    return best_key, vigenere_decrypt(text, best_key, alphabet), analysis.quadragramfitness(vigenere_decrypt(text, best_key, alphabet))
+    return best_key, vigenere_decrypt(text, best_key), analysis.quadragramfitness(vigenere_decrypt(text, best_key))
 
-def hill_climb_beaufort(text):
-    return hill_climb_vigenere(text,alphabet = 'ZYXWVUTSRQPONMLKJIHGFEDCBA')
     
-def vigenere_keyword_to_key(keyword,letters = string.ascii_uppercase):
+def vigenere_keyword_to_key(keyword):
     key = []
+    letters = string.ascii_uppercase
     for letter in keyword:
+        print(letter)
         key.append(letters.index(letter))
     return key
 # make key to keyword asw
-def vigenere_decrypt(text,keyword, letters = string.ascii_uppercase):
-    key = vigenere_keyword_to_key(keyword,letters)
+def vigenere_decrypt(text,keyword):
+    letters = string.ascii_uppercase
+    key = vigenere_keyword_to_key(keyword)
     text = formatcorpus(text)
     text = text.replace(' ','')
     period = len(keyword)
@@ -242,6 +249,29 @@ def railfence_decrypt(text,n_rails,offset = 0):
     
     return new_text
  
+def maximum_offset(text,rails):
+    maximum = len(text)
+    return min(maximum,(rails*2)-2)    
+ 
+def brute_railfence_decrypt(text):
+    range_of_rails = [r for r in range(2,len(text))]    
+    maxf = -20
+    maxkey = [0,0]
+    maxdecrypt = 'not found'
+    railsfound = False
+    for r in range_of_rails:
+        for o in range(maximum_offset(text,r)):
+            plaintext = railfence_decrypt(text, r, o)
+            fitness = analysis.quadragramfitness(plaintext)
+            if fitness > -11 and fitness > maxf:
+                maxf = fitness
+                maxkey = [r,o]
+                maxdecrypt = plaintext
+                railsfound = True
+        if railsfound:
+            return maxkey, maxdecrypt, maxf
+
+            
 def brute_permutation_decrypt(text, try_up_to = 8):
     for period in range(1,8):
         print('Trying period length:',period)
@@ -470,6 +500,7 @@ Select an option:
     (3) Monoalphabetic substitution decryption
     (4) Polyalphabetic cipher decryption
     (5) Permutation decryption
+    (6) Railfence decryption
     (0) Back to main menu
     ''')
                    
@@ -488,6 +519,8 @@ Select an option:
         GUI_permutation_decryption()
     elif option == '4':
         GUI_polyalphabetic_decryption()
+    elif option == '6':
+        GUI_railfence_decryption()
     elif option == '0':
         GUI()
     else:
@@ -579,7 +612,7 @@ Select an option:
     ''')
                    
     if option == '1':
-        best_key, plaintext, best_fitness = hill_climb_vigenere(ciphertext())
+        best_key, plaintext, best_fitness = hill_climb_vigenere(ciphertext_clean())
         print(f"\nDecrypted text: {plaintext}")
         print(f"\nFitness: {best_fitness}")
         print(f"\nKey: {''.join(best_key)}")
@@ -599,7 +632,43 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
         GUI()
     else:
         GUI_monoalphabetic_decryption()        
-    
+        
+def GUI_railfence_decryption():
+    option = input('''
+Select an option:
+    (1) Automatic decryption
+    (2) Decryption (known key)
+    (0) Back to main menu
+    ''')
+                   
+    if option == '1':
+        best_key, plaintext, best_fitness = brute_railfence_decrypt(ciphertext_clean())
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        print(f"\nRails: {best_key[0]}  Offset: {best_key[1]}")
+
+    elif option == '2':
+        rails = input('''
+Enter the number of rails:
+    ''')    
+        off = input('''\nEnter the offset:
+    ''')
+        solved = railfence_decrypt(ciphertext_clean(), int(rails),int(off))
+        print(solved)
+        
+    elif option == '3':
+        keyinput = input('''
+Enter key each item separated by a comma:
+    ''')
+        print(permutationdecrypt(ciphertext(), keyinput.split(',')))
+        
+        
+    elif option == '0':
+        GUI()
+    else:
+        GUI_railfence_decryption()   
+
+         
 def GUI_analysis():
     # variable s is 1/True to include spaces, 0/False to exclude them
     s = input('''Include spaces?
@@ -642,7 +711,6 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 # CODE
 
 #cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
-#GUI()
+GUI()
 #cProfile.run('print(hill_climb_vigenere(ciphertext()))')
-print(railfence_decrypt(ciphertext().replace('\n',''), 3, 2))
 

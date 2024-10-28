@@ -183,13 +183,13 @@ def ioc(text, spacesincluded = False):
         fac = 26
         
     df = monogramfreq(text,spacesincluded)
-    l = 0
+    letter_count = 0
     sigma = 0
     
-    for v in df:
-        l += v
-        sigma += v*(v-1)
-    sigma /= (l*(l-1))
+    for value in df:
+        letter_count += value
+        sigma += value*(value-1)
+    sigma /= (letter_count*(letter_count-1))
     
     return fac * sigma
 
