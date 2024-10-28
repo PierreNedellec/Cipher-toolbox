@@ -6,7 +6,7 @@ import analysis
 import random
 import cProfile
 import math
-from itertools import permutations
+from itertools import product, permutations
 import time
 
 # VARIABLES
@@ -116,6 +116,96 @@ def autopermutationencrypt(text,period):
             maxdecrypt = decrypt
             maxkey = perm
     return maxkey, maxdecrypt, maxf
+
+def vigenere_tranches(text,block_size):
+    tranches = [''] * block_size
+    for i,c in enumerate(text):
+        tranches[i%block_size] += c 
+    return tranches
+
+def vigenere_block_size(text,max_size = 20):
+    text = formatcorpus(text)
+    totaliocs = [0] * max_size
+    
+    for block in range(2,max_size):
+        sumofioc = 0
+        slices = vigenere_tranches(text,block)
+        for sub in slices:
+            sumofioc += analysis.ioc(sub)
+        avgofioc = sumofioc / block
+        totaliocs[block] = avgofioc
+    period = 0
+    
+    for b, ioc in enumerate(totaliocs):
+        if ioc > 1.60:
+            period = b
+            break
+            
+    return period
+
+def brute_vigenere_decrypt(text):
+    period = vigenere_block_size(text,100)
+    letters = string.ascii_uppercase
+    maxf = -20
+    maxkey = [0] * period
+    maxdecrypt = 'notfound'
+    combinations = list(product(letters,repeat=period))
+    
+    for combo in combinations:
+        print(combo)
+        new_decrypt = vigenere_decrypt(text, combo)
+        new_fitness = analysis.quadragramfitness(new_decrypt)
+        if new_fitness> maxf:
+            maxf = new_fitness
+            maxkey = combo
+            maxdecrypt = new_decrypt
+    
+    return maxkey, maxdecrypt, maxf
+    
+def hill_climb_vigenere(text, alphabet = string.ascii_uppercase):
+    period = vigenere_block_size(text,30)
+    best_key = ['A'] * period
+    done = False
+    
+    while not done:
+        oldkey = best_key
+        for i in range(period):
+            current_fitness = analysis.quadragramfitness(vigenere_decrypt(text, best_key, alphabet))
+            for l in range(26):
+                candidate_keyword = best_key.copy()
+                candidate_keyword[i] = alphabet[l]
+                candidate_fitness = analysis.quadragramfitness(vigenere_decrypt(text, candidate_keyword, alphabet))
+                
+                if candidate_fitness > current_fitness:
+                    best_key = candidate_keyword
+                    current_fitness = candidate_fitness
+
+        if oldkey == best_key:
+            done = True
+            
+    return best_key, vigenere_decrypt(text, best_key, alphabet), analysis.quadragramfitness(vigenere_decrypt(text, best_key, alphabet))
+
+def hill_climb_beaufort(text):
+    return hill_climb_vigenere(text,alphabet = 'ZYXWVUTSRQPONMLKJIHGFEDCBA')
+    
+def vigenere_keyword_to_key(keyword,letters = string.ascii_uppercase):
+    key = []
+    for letter in keyword:
+        key.append(letters.index(letter))
+    return key
+# make key to keyword asw
+def vigenere_decrypt(text,keyword, letters = string.ascii_uppercase):
+    key = vigenere_keyword_to_key(keyword,letters)
+    text = formatcorpus(text)
+    text = text.replace(' ','')
+    period = len(keyword)
+    new_text = ''
+    
+    for position,letter in enumerate(text):
+        new_letter_index = (letters.index(letter) - key[position%period])%26
+        new_text += letters[new_letter_index]
+    
+    return new_text
 
 def brute_permutation_decrypt(text, try_up_to = 8):
     for period in range(1,8):
@@ -343,7 +433,8 @@ Select an option:
     (1) Caesar decrypt
     (2) Affine decrypt
     (3) Monoalphabetic substitution decryption
-    (4) Permutation decryption
+    (4) Polyalphabetic cipher decryption
+    (5) Permutation decryption
     (0) Back to main menu
     ''')
                    
@@ -358,8 +449,10 @@ Select an option:
         print('\nFitness:',solved[2])
     elif option == '3':
         GUI_monoalphabetic_decryption()
-    elif option == '4':
+    elif option == '5':
         GUI_permutation_decryption()
+    elif option == '4':
+        GUI_polyalphabetic_decryption()
     elif option == '0':
         GUI()
     else:
@@ -441,6 +534,37 @@ Enter key each item separated by a comma:
     else:
         GUI_permutation_decryption()
     
+def GUI_polyalphabetic_decryption():
+    option = input('''
+Select an option:
+    (1) Automatic Vigenère decryption
+    (2) Automatic Beaufort decryption
+    (3) Coming soon
+    (0) Back to main menu
+    ''')
+                   
+    if option == '1':
+        plaintext, best_key, best_fitness = hill_climb_vigenere(ciphertext())
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        print(f"\nKey: {''.join(best_key)}")
+
+    elif option == '2':
+        plaintext, best_key, best_fitness = hill_climb_beaufort(ciphertext())
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        print(f"\nKey: {''.join(best_key)}")
+        
+    elif option == '3':
+        print('''Input key:
+ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
+        print(monoalphabetic_decrypt(ciphertext(),input()))
+        
+    elif option == '0':
+        GUI()
+    else:
+        GUI_monoalphabetic_decryption()        
+    
 def GUI_analysis():
     # variable s is 1/True to include spaces, 0/False to exclude them
     s = input('''Include spaces?
@@ -484,5 +608,6 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 #cProfile.run('print(hill_climb_monoalphabetic(ciphertext()))')
 GUI()
+#cProfile.run('print(hill_climb_vigenere(ciphertext()))')
 
 

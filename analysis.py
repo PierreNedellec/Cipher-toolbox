@@ -177,7 +177,6 @@ def quadragramfitness(text,equadragrams= englishquadragrams(0,1),spacesincluded 
 # Index of coincidence
 
 def ioc(text, spacesincluded = False):
-    text = formatcorpus(text)
     fac = 27
     if not spacesincluded:
         text.replace(' ','')
@@ -187,7 +186,7 @@ def ioc(text, spacesincluded = False):
     l = 0
     sigma = 0
     
-    for k,v in df.items():
+    for v in df:
         l += v
         sigma += v*(v-1)
     sigma /= (l*(l-1))
