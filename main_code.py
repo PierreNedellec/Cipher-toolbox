@@ -46,6 +46,26 @@ def formatcorpus(text):
             
     return new
 
+def insert_spaces(text):
+    text = formatcorpus(text).replace(' ','')
+    words = open('english_words_alphabetical.txt','r').read()
+    cell = ' '
+    new_text = ''
+    
+    while len(text) != 0:
+        cell += text[0]
+        text = text[1:]
+        if cell in words:
+            new_text += cell
+            cell = ' '
+        if len(cell) > 19:
+            new_text += cell
+            cell = ' '
+    if cell != ' ':
+        new_text += cell
+    
+    return new_text
+    
 
 def dict2valuelist(mydict):
     out = []
@@ -483,6 +503,7 @@ Select an option:
     (1) Decryption
     (2) Encryption
     (3) Text analysis
+    (4) Insert spaces (for plaintexts)
     ''')
               
     if option == '1':
@@ -491,6 +512,8 @@ Select an option:
         GUI_encrypt()
     elif option == '3':
         GUI_analysis()
+    elif option == '4':
+        print(insert_spaces(ciphertext()))
     else:
         GUI()
     
@@ -681,7 +704,7 @@ def GUI_analysis():
     if s == '0':
         s = False 
     mf = analysis.monogramfitness(ciphertext_clean(),s)
-    qf = analysis.quadragramfitness(ciphertext_clean(),spacesincluded = False)
+    qf = analysis.quadragramfitness(ciphertext_clean(), analysis.englishquadragrams(s,1), spacesincluded = s)
     ioc = analysis.ioc(ciphertext_clean(),s)
     mf = round(mf,3)
     qf = round(qf,2)

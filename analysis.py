@@ -155,7 +155,7 @@ def englishquadragrams(spacesincluded = False, log = False):
         f[a] = n
     return f
 
-def quadragramfitness(text,equadragrams= englishquadragrams(0,1),spacesincluded = False, scale = True):
+def quadragramfitness(text, equadragrams= englishquadragrams(0,1), spacesincluded = False, scale = True):
     eletters = list(string.ascii_uppercase)
            
     if not spacesincluded:
