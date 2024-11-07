@@ -48,7 +48,7 @@ def formatcorpus(text):
 
 def insert_spaces(text):
     text = formatcorpus(text).replace(' ','')
-    words = open('english_words_alphabetical.txt','r').read()
+    words = open('english_words.txt','r').read()
     cell = ' '
     new_text = ''
     

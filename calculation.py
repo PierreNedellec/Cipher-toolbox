@@ -1,6 +1,18 @@
 import string
 from math import log
 
+def sortdict(mydict,mode=1,invert=0):
+    # mode = 0 sorts by key, mode = 1 by value
+    
+    sorteddict = sorted(mydict.items(),key= lambda item: item[mode])
+    if not invert:
+        sorteddict = dict(sorteddict[::-1])
+    if invert:
+        sorteddict = dict(sorteddict)
+    # Sorts the dictionary using the key: it looks at the second variable in the dictionary entry. Thats what the lambda function does.
+            
+    return sorteddict
+
 
 def quadragrams():
     text = open('brown_corpus_words.txt','r').read()
@@ -72,4 +84,33 @@ def addlogs():
     g = open('english_quadragram_frequencies_spaces_logvalues.txt','w')
     g.write(new)
     
-addlogs()
+#addlogs()
+
+e = open('english_words.txt','w')
+f = open('english_words_frequencies.txt','w')
+corpus = open('brown_corpus_words.txt','r').read().split(' ')
+
+frequencies = {}
+
+for word in corpus:
+    try:
+        frequencies[word] += 1
+    except KeyError:
+        frequencies[word] = 1
+
+frequencies = sortdict(frequencies)
+new = ''
+
+for k,v in frequencies.items():
+    new += (k+';'+str(v)+'\n')
+f.write(new)
+
+
+frequencies = sortdict(frequencies,0,1)
+for letter in 'BCDEFGHJKLMNOPQRSTUVWXYZ':
+    del frequencies[letter]
+new = []
+for k,v in frequencies.items():
+    if v > 0:
+        new.append(k)
+e.write(' '.join(new))
