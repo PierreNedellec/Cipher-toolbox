@@ -564,7 +564,7 @@ Select an option:
     elif option == '3':
         print('''Input key:
 ABCDEFGHIJKLMNOPQRSTUVWXYZ''')
-        print(monoalphabetic_decrypt(ciphertext(),input()))
+        print(monoalphabetic_decrypt(ciphertext(),dictionarise_key(input())))
         
     elif option == '0':
         GUI()
