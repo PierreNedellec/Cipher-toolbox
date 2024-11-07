@@ -678,9 +678,9 @@ def GUI_analysis():
         s = True
     if s == '0':
         s = False 
-    mf = analysis.monogramfitness(ciphertext(),s)
-    qf = analysis.quadragramfitness(ciphertext(),s)
-    ioc = analysis.ioc(ciphertext(),s)
+    mf = analysis.monogramfitness(ciphertext_clean(),s)
+    qf = analysis.quadragramfitness(ciphertext_clean(),spacesincluded = False)
+    ioc = analysis.ioc(ciphertext_clean(),s)
     mf = round(mf,3)
     qf = round(qf,2)
     ioc = round(ioc,3)
