@@ -280,6 +280,8 @@ def brute_permutation_decrypt(text, try_up_to = 8):
             print('Plaintext: ',p)
             print('\nFitness: ',f)
             print('\nKey: ',k)
+            print('\nBlock size: ',period,'\n')
+
         
 
 def caesardecrypt(text,key):
