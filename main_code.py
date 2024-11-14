@@ -216,10 +216,10 @@ def vigenere_keyword_to_key(keyword):
     key = []
     letters = string.ascii_uppercase
     for letter in keyword:
-        print(letter)
         key.append(letters.index(letter))
     return key
 # make key to keyword asw
+
 def vigenere_decrypt(text,keyword):
     letters = string.ascii_uppercase
     key = vigenere_keyword_to_key(keyword)
@@ -229,7 +229,7 @@ def vigenere_decrypt(text,keyword):
     new_text = ''
     
     for position,letter in enumerate(text):
-        new_letter_index = (letters.index(letter) + key[position%period])%26
+        new_letter_index = (letters.index(letter) - key[position%period])%26
         new_text += letters[new_letter_index]
     
     return new_text
