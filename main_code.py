@@ -234,6 +234,45 @@ def vigenere_decrypt(text,keyword):
     
     return new_text
 
+def hill_climb_beaufort(text):
+    print(text)
+    alphabet = string.ascii_uppercase
+    period = vigenere_block_size(text,30)
+    best_key = ['A'] * period
+    done = False
+    
+    while not done:
+        oldkey = best_key
+        for i in range(period):
+            current_fitness = analysis.quadragramfitness(beaufort_decrypt(text, best_key))
+            for l in range(26):
+                candidate_keyword = best_key.copy()
+                candidate_keyword[i] = alphabet[l]
+                candidate_fitness = analysis.quadragramfitness(beaufort_decrypt(text, candidate_keyword))
+                
+                if candidate_fitness > current_fitness:
+                    best_key = candidate_keyword
+                    current_fitness = candidate_fitness
+
+        if oldkey == best_key:
+            done = True
+            
+    return best_key, beaufort_decrypt(text, best_key), analysis.quadragramfitness(beaufort_decrypt(text, best_key))
+
+def beaufort_decrypt(text,keyword):
+    letters = list(string.ascii_uppercase)
+    key = vigenere_keyword_to_key(keyword)
+    text = formatcorpus(text)
+    text = text.replace(' ','')
+    period = len(keyword)
+    new_text = ''
+    
+    for position,letter in enumerate(text):
+        new_letter_index = (letters[::-1].index(letter) + key[position%period]+1)%26
+        new_text += letters[new_letter_index]
+
+    return new_text
+
 
 def railfence_encrypt(text,n_rails,offset = 0):
     rails = [''] * n_rails
@@ -643,7 +682,7 @@ Select an option:
         print(f"\nKey: {''.join(best_key)}")
 
     elif option == '2':
-        best_key, plaintext, best_fitness = hill_climb_beaufort(ciphertext())
+        best_key, plaintext, best_fitness = hill_climb_beaufort(ciphertext_clean())
         print(f"\nDecrypted text: {plaintext}")
         print(f"\nFitness: {best_fitness}")
         print(f"\nKey: {''.join(best_key)}")
