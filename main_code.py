@@ -148,7 +148,8 @@ def vigenere_tranches(text,block_size):
         tranches[i%block_size] += c 
     return tranches
 
-def vigenere_block_size(text,max_size = 20):
+def vigenere_block_size(text,max_size = 20, threshold = 1.6):
+    t = threshold
     text = formatcorpus(text).replace(' ','')
     totaliocs = [0] * max_size
     
@@ -162,10 +163,11 @@ def vigenere_block_size(text,max_size = 20):
     period = 0
     
     for b, ioc in enumerate(totaliocs):
-        if ioc > 1.60:
+        if ioc > threshold:
             period = b
             break
-            
+    if period == 0:
+        period = vigenere_block_size(text,threshold=t-0.1)
     return period
 
 def brute_vigenere_decrypt(text):
@@ -235,7 +237,6 @@ def vigenere_decrypt(text,keyword):
     return new_text
 
 def hill_climb_beaufort(text):
-    print(text)
     alphabet = string.ascii_uppercase
     period = vigenere_block_size(text,30)
     best_key = ['A'] * period
@@ -332,7 +333,7 @@ def brute_railfence_decrypt(text):
 
             
 def brute_permutation_decrypt(text, try_up_to = 8):
-    for period in range(1,8):
+    for period in range(1,try_up_to):
         print('Trying period length:',period)
         k, p, f = autopermutationencrypt(text, period)
         if f > -11:
@@ -645,7 +646,7 @@ Select an option:
     ''')
                    
     if option == '1':
-        brute_permutation_decrypt(ciphertext())
+        brute_permutation_decrypt(ciphertext(),11)
 
     elif option == '2':
         p = input('''
