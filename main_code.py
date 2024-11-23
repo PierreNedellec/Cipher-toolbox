@@ -125,13 +125,38 @@ def alphabet_keyword_mix(keyword,mode = 0):
         mix = keyword + alphabet
         return remove_double_letters(mix)
 
-
+def generate_psquare(keyword = None,mix = 0,mode = 0, same_letter = 'i/j'):
+    #       Mode 0/1              Mode 2/3              Mode 4/5
+    #       Across              Vertical            Spiral
+    #      0 Left-Right         2 Up-Down           4 In-Out
+    #      1 Right-Left         3 Down-Up           5 Out-In
     
-
-def generate_psquare(alphabet,keyword = None,mode = 0, same_letter = 'i/j'):
     square = [[a for a in range(5)] for b in range(5)]
+    alphabet = list(string.ascii_uppercase)
+    
+    if keyword != None:
+        alphabet = alphabet_keyword_mix(keyword,mode = mix)
+    
+    
     
     return
+
+def double_char_to_one(text):
+    translator = dict()
+    alphabet = list(string.ascii_uppercase)
+    
+    for chars in range(0,len(text),2):
+        charpair = text[chars:(chars+2)]
+        if charpair not in translator.keys():
+            translator[charpair] = alphabet[len(translator)]
+    
+    newtext = ''.join(translator.get(text[c:(c+2)], 'error') for c in range(0,len(text),2))
+    # ^adapted version of monoalphabetic_decryption funciton    
+    return newtext
+
+
+def decrypt_psquare(text):
+    return auto_monoalphabetic_decrypt(double_char_to_one(text))
 
 def perminverse(perm):
     newperm = [-1]*len(perm)
@@ -597,6 +622,9 @@ Select an option:
         GUI_analysis()
     elif option == '4':
         print(insert_spaces(ciphertext()))
+    elif option == 't':
+        # INSERT TEST FUNCTION
+        print(decrypt_psquare(ciphertext_clean()))
     else:
         GUI()
     
@@ -609,6 +637,7 @@ Select an option:
     (4) Polyalphabetic cipher decryption
     (5) Permutation decryption
     (6) Railfence decryption
+    (7) Polybius square
     (0) Back to main menu
     ''')
                    
@@ -629,6 +658,8 @@ Select an option:
         GUI_polyalphabetic_decryption()
     elif option == '6':
         GUI_railfence_decryption()
+    elif option == '7':
+        GUI_polibius_square_decryption()
     elif option == '0':
         GUI()
     else:
@@ -715,7 +746,7 @@ def GUI_polyalphabetic_decryption():
 Select an option:
     (1) Automatic Vigenère decryption
     (2) Automatic Beaufort decryption
-    (3) Coming soon
+    (3) Coming soon (quagmire)
     (0) Back to main menu
     ''')
                    
@@ -775,6 +806,10 @@ Enter key each item separated by a comma:
         GUI()
     else:
         GUI_railfence_decryption()   
+
+
+def GUI_polibius_square_decryption():
+    
 
          
 def GUI_analysis():
