@@ -149,9 +149,11 @@ def double_char_to_one(text):
         charpair = text[chars:(chars+2)]
         if charpair not in translator.keys():
             translator[charpair] = alphabet[len(translator)]
+    print(translator)
     
     newtext = ''.join(translator.get(text[c:(c+2)], 'error') for c in range(0,len(text),2))
     # ^adapted version of monoalphabetic_decryption funciton    
+    print(newtext)
     return newtext
 
 
@@ -809,7 +811,21 @@ Enter key each item separated by a comma:
 
 
 def GUI_polibius_square_decryption():
-    
+    option = input('''
+Select an option:
+    (1) Automatic polibius squre decryption
+    (0) Back to main menu
+    ''')               
+
+    if option == '1':
+        plaintext, best_key, best_fitness = auto_monoalphabetic_decrypt(double_char_to_one(ciphertext().replace(' ','')))
+        print(f"\nDecrypted text: {plaintext}")
+        print(f"\nFitness: {best_fitness}")
+        
+    elif option == '0':
+        GUI()
+    else:
+        GUI_monoalphabetic_decryption()
 
          
 def GUI_analysis():
