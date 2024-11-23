@@ -149,11 +149,9 @@ def double_char_to_one(text):
         charpair = text[chars:(chars+2)]
         if charpair not in translator.keys():
             translator[charpair] = alphabet[len(translator)]
-    print(translator)
     
     newtext = ''.join(translator.get(text[c:(c+2)], 'error') for c in range(0,len(text),2))
     # ^adapted version of monoalphabetic_decryption funciton    
-    print(newtext)
     return newtext
 
 
@@ -192,10 +190,11 @@ def permutationencrypt(text,key):
         new_text += ''.join(new_cell) + ' '
     return new_text
 
+
 def permutationdecrypt(text,key):
     return permutationencrypt(text,perminverse(key))
 
-def autopermutationencrypt(text,period):
+def autopermutationdecrypt(text,period):
     text = pad_text(text, period)
     quads = analysis.englishquadragrams(0,1)
 
@@ -728,7 +727,7 @@ Select an option:
         p = input('''
 Enter the period:
     ''')    
-        solved = autopermutationencrypt(ciphertext(), int(p))
+        solved = autopermutationdecrypt(ciphertext(), int(p))
         print(solved[1])
         print('key:',solved[0])
         
