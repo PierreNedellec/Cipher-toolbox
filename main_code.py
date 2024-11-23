@@ -112,10 +112,20 @@ def alphabet_keyword_mix(keyword,mode = 0):
     alphabet = list(string.ascii_uppercase)
     keyword = remove_double_letters(keyword)
     
+    if mode == 2 or mode == 3:
+        alphabet = alphabet[::-1]
+        mode -= 2
+        
     if mode == 0:
         last_letter = alphabet.index(keyword[-1])
         mix = keyword + alphabet[last_letter:] + alphabet[:last_letter]
         return remove_double_letters(mix)
+    
+    if mode == 1:
+        mix = keyword + alphabet
+        return remove_double_letters(mix)
+
+
     
 
 def generate_psquare(alphabet,keyword = None,mode = 0, same_letter = 'i/j'):
