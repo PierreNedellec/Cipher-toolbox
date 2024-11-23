@@ -90,6 +90,35 @@ def THEclue(raw_text):
     
     return '....'+e+'..............'+t+'......'
 
+def remove_double_letters(word):
+    word = list(word)
+    letters = list(set(word))
+    goal_length = len(letters)
+    pops = []
+    
+    while len(word) != goal_length:
+        for num,b in enumerate(word):
+            if b in word[:num]:
+                pops.append(b)
+        
+        word = word[::-1]
+        for p in pops:
+            word.remove(p)
+        word = word[::-1]
+    return word
+
+def alphabet_keyword_mix(keyword,mode = 0):
+    # Mode 0 = WORDEFG... Mode 1 = WORDABCE... Mode 2 = WORDCBAZ... Mode 3 = WORDZYX...
+    alphabet = list(string.ascii_uppercase)
+    
+    
+    
+
+def generate_psquare(alphabet,keyword = None,mode = 0, same_letter = 'i/j'):
+    square = [[a for a in range(5)] for b in range(5)]
+    
+    return
+
 def perminverse(perm):
     newperm = [-1]*len(perm)
     for l in range(len(perm)):
