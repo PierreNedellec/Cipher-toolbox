@@ -127,6 +127,15 @@ def alphabet_keyword_mix(keyword,mode = 0):
     
     
 def simple_columnar_transposition_encrypt(text,ncolumns,pad = True):
+    # Message placed in matrix like so:
+    #['T', 'H', 'I', 'S', 'M', 'E', 'S', 'S']
+    #['A', 'G', 'E', 'W', 'A', 'S', 'E', 'N']
+    #['C', 'R', 'Y', 'P', 'T', 'E', 'D', 'W']
+    #['I', 'T', 'H', 'A', 'T', 'R', 'A', 'N']
+    #['S', 'P', 'O', 'S', 'I', 'T', 'I', 'O']
+    #['N', 'C', 'I', 'P', 'H', 'E', 'R', 'X']
+    #Then read off in columns
+    
     text = text.replace(' ','')
     character = 'X'
     if not pad:
@@ -136,16 +145,39 @@ def simple_columnar_transposition_encrypt(text,ncolumns,pad = True):
     nrows = int(nrows)
     if ncolumns*nrows != len(text):
         print('error in matrix transposition: number of columns, number of rows and length of text do not match')
-    matrix = [[a for a in range(nrows)] for b in range(ncolumns)]
-    # matrix[row][column]
+        
+    matrix = [[a for a in range(ncolumns)] for b in range(nrows)]
     for n,letter in enumerate(text):
         column = n%ncolumns
         row = n//ncolumns
-        print(row,column)
-        matrix[column][row] = letter
-    
+        matrix[row][column] = letter
+        
+    print(matrix)
     newtext = []
+    # how to read matrix
     for c in range(ncolumns):
+        for r in range(nrows):
+            newtext += matrix[r][c]
+    
+    return ''.join(newtext)
+
+def simple_columnar_transposition_decrypt(text,ncolumns):
+    text = text.replace(' ','')
+    nrows = len(text)/ncolumns
+    nrows = int(nrows)
+    if ncolumns*nrows != len(text):
+        print('error in matrix transposition: number of columns, number of rows and length of text do not match')
+        
+    matrix = [[a for a in range(ncolumns)] for b in range(nrows)]
+    for n,letter in enumerate(text):
+        row = n%nrows
+        column = n//nrows
+        matrix[row][column] = letter
+        
+    print(matrix)
+    newtext = []
+    # how to read matrix
+    for c in range(nrows):
         newtext += matrix[c]
     
     return ''.join(newtext)
@@ -650,7 +682,7 @@ Select an option:
         print(insert_spaces(ciphertext()))
     elif option == 't':
         # INSERT TEST FUNCTION
-        print(simple_columnar_transposition_encrypt(ciphertext(), 8, False))
+        print(simple_columnar_transposition_decrypt(ciphertext(), 8))
     else:
         GUI()
     
