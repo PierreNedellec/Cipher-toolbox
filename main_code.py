@@ -124,6 +124,31 @@ def alphabet_keyword_mix(keyword,mode = 0):
     if mode == 1:
         mix = keyword + alphabet
         return remove_double_letters(mix)
+    
+    
+def simple_columnar_transposition_encrypt(text,ncolumns,pad = True):
+    text = text.replace(' ','')
+    character = 'X'
+    if not pad:
+        character = ' '
+    text = pad_text(text, ncolumns, padchar = character)
+    nrows = len(text)/ncolumns
+    nrows = int(nrows)
+    if ncolumns*nrows != len(text):
+        print('error in matrix transposition: number of columns, number of rows and length of text do not match')
+    matrix = [[a for a in range(nrows)] for b in range(ncolumns)]
+    # matrix[row][column]
+    for n,letter in enumerate(text):
+        column = n%ncolumns
+        row = n//ncolumns
+        print(row,column)
+        matrix[column][row] = letter
+    
+    newtext = []
+    for c in range(ncolumns):
+        newtext += matrix[c]
+    
+    return ''.join(newtext)
 
 def generate_psquare(keyword = None,mix = 0,mode = 0, same_letter = 'i/j'):
     #       Mode 0/1              Mode 2/3              Mode 4/5
@@ -165,7 +190,7 @@ def perminverse(perm):
         
     return newperm
 
-def pad_text(raw_text,block_size):
+def pad_text(raw_text,block_size,padchar = 'X'):
     text = formatcorpus(raw_text)
     text = text.replace(' ','')
     length = len(text)
@@ -173,7 +198,7 @@ def pad_text(raw_text,block_size):
     if add > 0:
         add = block_size - add
     
-    return (raw_text + ('X'*add))
+    return (raw_text + (padchar*add))
     
 
 def permutationencrypt(text,key):
@@ -404,7 +429,7 @@ def brute_railfence_decrypt(text):
 def brute_permutation_decrypt(text, try_up_to = 8):
     for period in range(1,try_up_to):
         print('Trying period length:',period)
-        k, p, f = autopermutationencrypt(text, period)
+        k, p, f = autopermutationdecrypt(text, period)
         if f > -11:
             print('Plaintext: ',p)
             print('\nFitness: ',f)
@@ -625,7 +650,7 @@ Select an option:
         print(insert_spaces(ciphertext()))
     elif option == 't':
         # INSERT TEST FUNCTION
-        print(decrypt_psquare(ciphertext_clean()))
+        print(simple_columnar_transposition_encrypt(ciphertext(), 8, False))
     else:
         GUI()
     
